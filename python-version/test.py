@@ -18,8 +18,8 @@ def main(argv):
 
     # Check if image is loaded fine
     if src is None:
-        print ('Error opening image!')
-        print ('Usage: hough_lines.py [image_name -- default ' + default_file + '] \n')
+        print('Error opening image!')
+        print('Usage: hough_lines.py [image_name -- default ' + default_file + '] \n')
         return -1
     ## [load]
 
@@ -46,10 +46,10 @@ def main(argv):
             b = math.sin(theta)
             x0 = a * rho
             y0 = b * rho
-            pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
-            pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
+            pt1 = (int(x0 + 1000 * (-b)), int(y0 + 1000 * (a)))
+            pt2 = (int(x0 - 1000 * (-b)), int(y0 - 1000 * (a)))
 
-            cv.line(cdst, pt1, pt2, (0,0,255), 3, cv.LINE_AA)
+            cv.line(cdst, pt1, pt2, (0, 0, 255), 3, cv.LINE_AA)
     ## [draw_lines]
 
     ## [hough_lines_p]
@@ -61,19 +61,36 @@ def main(argv):
     if linesP is not None:
         for i in range(0, len(linesP)):
             l = linesP[i][0]
-            cv.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv.LINE_AA)
+            cv.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 3, cv.LINE_AA)
     ## [draw_lines_p]
     ## [imshow]
     # Show results
-    cv.imshow("Source", src)
-    #cv.imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst)
-    cv.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
+    cv.imshow("Source", ResizeWithAspectRatio(src, width=800))
+    # cv.imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst)
+    cv.imshow("Detected Lines (in red) - Probabilistic Line Transform", ResizeWithAspectRatio(cdstP, width=800))
     ## [imshow]
     ## [exit]
     # Wait and Exit
     cv.waitKey()
     return 0
     ## [exit]
+
+
+
+def ResizeWithAspectRatio(image, width=None, height=None, inter=cv.INTER_AREA):
+    dim = None
+    (h, w) = image.shape[:2]
+
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    return cv.resize(image, dim, interpolation=inter)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
