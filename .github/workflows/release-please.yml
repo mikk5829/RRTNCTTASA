@@ -16,7 +16,6 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         with:
           release-type: python
-          package-name: release-please-action
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
           path: python-version
