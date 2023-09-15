@@ -3,10 +3,8 @@ name: Conventional Commits
 on:
   pull_request:
     branches: [ main ]
-  workflow_run:
-    workflows: ["Release Please"]
-    types:
-      - completed
+  push:
+    branches: [ release-please--branches--main--components--RRTNCTTASA ]
 
 jobs:
   build:
