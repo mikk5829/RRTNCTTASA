@@ -26,7 +26,7 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA
     return cv.resize(image, dim, interpolation=inter)
 
 
-def get_images_from_directory(folder_path):
+def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     """
     This function is used to get all the images from a folder and return them in a dict with the filename as key
     :param folder_path: the path to the folder with the images
@@ -37,7 +37,7 @@ def get_images_from_directory(folder_path):
     # find files in folder
     for filename in sorted(os.listdir(folder_path)):
         # read images with open cv
-        img = cv.imread(os.path.join(folder_path, filename))
+        img = cv.imread(os.path.join(folder_path, filename)) # TODO might be better to skip this step and only read the images when needed
         filename_number = filename.split(".")[0]
 
         if img is not None:
@@ -57,3 +57,10 @@ def get_images_from_directory(folder_path):
 
     # return dict with images
     return images
+
+
+# A function that yields the images from a folder one by one
+def get_images_from_directory_generator(folder_path) -> (str, cv.Mat):
+    images = get_images_from_directory(folder_path)
+    for key in images.keys():
+        yield (key, images[key])

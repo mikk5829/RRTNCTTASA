@@ -9,3 +9,7 @@ args = parser.parse_args()
 
 def add_parser_get_args():
     return args
+
+
+def get_image_path():
+    return args.image_folder_path
