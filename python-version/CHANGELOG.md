@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.5](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.4...v0.0.5) (2023-09-18)
+
+
+### Features
+
+* Added the Pose model ([78dff00](https://github.com/mikk5829/RRTNCTTASA/commit/78dff002df52c568c00f9363eb9d3ddc606908a8))
+* Started the pipeline for tracking ([6f11a8b](https://github.com/mikk5829/RRTNCTTASA/commit/6f11a8b94b1544bedaf0e882d1e9088aaf394d3a))
+
 ## [0.0.4](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.3...v0.0.4) (2023-09-15)
 
 
