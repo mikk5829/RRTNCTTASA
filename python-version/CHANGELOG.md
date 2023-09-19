@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.5...v0.0.6) (2023-09-19)
+
+
+### Features
+
+* added more features to the object ([d6f2199](https://github.com/mikk5829/RRTNCTTASA/commit/d6f219918ed1fa1a677f735a645419d861d15b8f))
+* started the object detector ([f94f36c](https://github.com/mikk5829/RRTNCTTASA/commit/f94f36c68adcf4ee1c52369af3a7450d8a137c6e))
+
 ## [0.0.5](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.4...v0.0.5) (2023-09-18)
 
 
