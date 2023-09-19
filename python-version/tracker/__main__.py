@@ -4,7 +4,7 @@ from tracker import Tracker
 
 def main():
     tracker = Tracker()
-    tracker.estimate_pose_from_folder()
+    tracker.estimate_pose()
     # args = add_parser_get_args()
     # images = get_images_from_directory(args.image_folder_path)
     # # print keys

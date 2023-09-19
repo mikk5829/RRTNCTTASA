@@ -26,6 +26,21 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA
     return cv.resize(image, dim, interpolation=inter)
 
 
+def get_image_from_file(file_path) -> cv.Mat:
+    """
+    This function is used to get an image from a file
+    :param file_path: the path to the file with the image
+    :return: the image
+    """
+    # read image with open cv
+    img = cv.imread(file_path, cv.IMREAD_GRAYSCALE)
+
+    if img is None:
+        raise ValueError(f"The file {os.path.abspath(file_path)} is not an image.")
+
+    # return image
+    return img
+
 def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     """
     This function is used to get all the images from a folder and return them in a dict with the filename as key
@@ -37,7 +52,7 @@ def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     # find files in folder
     for filename in sorted(os.listdir(folder_path)):
         # read images with open cv
-        img = cv.imread(os.path.join(folder_path, filename)) # TODO might be better to skip this step and only read the images when needed
+        img = cv.imread(os.path.join(folder_path, filename), cv.IMREAD_GRAYSCALE) # TODO might be better to skip this step and only read the images when needed
         filename_number = filename.split(".")[0]
 
         if img is not None:
