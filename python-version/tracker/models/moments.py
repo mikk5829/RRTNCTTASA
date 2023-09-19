@@ -3,24 +3,36 @@ import math
 import cv2 as cv
 
 
-class Coordinates:
+class SimpleCoordinates:
     """
     This class is used to store the coordinates of an object
     """
     x: int = None
     y: int = None
+
+    def __init__(self, coordinates: list):
+        self.x = coordinates[0]
+        self.y = coordinates[1]
+
+    def __str__(self):
+        return f"x: {self.x}, y: {self.y}"
+
+
+class Coordinates(SimpleCoordinates):
+    """
+    This class is used to store the coordinates of an object
+    """
     orientation: float = None
     orientation_degrees: float = None
 
     def __init__(self, x: int, y: int, orientation: float = None):
-        self.x = x
-        self.y = y
+        super().__init__([x, y])
         self.orientation = orientation
         self.orientation_degrees = orientation * 180 / math.pi
 
     def __str__(self):
-        return f"x: {self.x}, y: {self.y}, orientation in radians: {self.orientation}, orientation in degrees:" \
-               f" {self.orientation_degrees}"
+        return super().__str__() + f", orientation in radians: {self.orientation:.4f}, orientation in degrees:" \
+                                   f" {self.orientation_degrees:.4f}"
 
 
 class Moments:

@@ -28,7 +28,8 @@ class Tracker:
         object_detector = ObjectDetector()
         object = object_detector.get_object(self.image)
         print(object)
-        cv.imshow("Source", resize_with_aspect_ratio(object.aligned_image, width=800))
+        cv.imshow("image", resize_with_aspect_ratio(self.image, width=800))
+        cv.imshow("tracker", resize_with_aspect_ratio(object.aligned_image, width=800))
         cv.waitKey()
         # Either separate object from background or use line detection and choose the best fit
         # Compare the object to the 3D (mesh) model if available also use old information to predict the pose
