@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.7](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.6...v0.0.7) (2023-09-29)
+
+
+### Features
+
+* Added dependency injection ([fdc1fa0](https://github.com/mikk5829/RRTNCTTASA/commit/fdc1fa097cea9afccf63d7fda97df6fcf6be1126))
+* Blender script for generating 2D images of 3D model ([047ff4c](https://github.com/mikk5829/RRTNCTTASA/commit/047ff4c5f1372d5185acfc726a57620623dabbd6))
+
+
+### Documentation
+
+* added run configurations for PyCharm ([3ddb695](https://github.com/mikk5829/RRTNCTTASA/commit/3ddb69517490834895032ec3e37c3680bc798b2b))
+
 ## [0.0.6](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.5...v0.0.6) (2023-09-19)
 
 
