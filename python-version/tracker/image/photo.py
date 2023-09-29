@@ -1,5 +1,9 @@
 import os
+from typing import Union, Any
+
 import cv2 as cv
+from cv2 import Mat
+from numpy import ndarray, dtype, generic
 
 
 def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA):
@@ -26,7 +30,7 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA
     return cv.resize(image, dim, interpolation=inter)
 
 
-def get_image_from_file(file_path) -> cv.Mat:
+def get_image_from_file(file_path) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
     """
     This function is used to get an image from a file
     :param file_path: the path to the file with the image
@@ -41,6 +45,34 @@ def get_image_from_file(file_path) -> cv.Mat:
     # return image
     return img
 
+
+def get_files_from_directory(folder_path) -> list[str]:
+    """
+    This function is used to get all the files from a folder
+    :param folder_path: the path to the folder with the files
+    :return: list with files
+    """
+    files = list()
+    # find files in folder
+    for filename in sorted(os.listdir(folder_path)):
+        # append files to list
+        files.append(filename)
+
+    # return list with files
+    return files
+
+
+def get_raw_images_from_directory_generator(folder_path) -> (str, cv.Mat):
+    images_paths = get_files_from_directory(folder_path)
+    for path in images_paths:
+        try:
+            image = get_image_from_file(os.path.join(folder_path, path))
+        except ValueError:
+            continue
+
+        yield path, image
+
+
 def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     """
     This function is used to get all the images from a folder and return them in a dict with the filename as key
@@ -52,7 +84,8 @@ def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     # find files in folder
     for filename in sorted(os.listdir(folder_path)):
         # read images with open cv
-        img = cv.imread(os.path.join(folder_path, filename), cv.IMREAD_GRAYSCALE) # TODO might be better to skip this step and only read the images when needed
+        img = cv.imread(os.path.join(folder_path, filename),
+                        cv.IMREAD_GRAYSCALE)  # TODO might be better to skip this step and only read the images when needed
         filename_number = filename.split(".")[0]
 
         if img is not None:

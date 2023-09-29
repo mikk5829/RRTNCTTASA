@@ -21,7 +21,7 @@ class ObjectDetector:
         blur_image = cv.GaussianBlur(self.__grey_scale_image, (5, 5), 0)
 
         # make a threshold of the blurred image to get a binary image
-        ret, self.__preprocessed_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
+        ret, self.__preprocessed_image = cv.threshold(blur_image, 25, 255, cv.THRESH_BINARY)
 
     def __align_image(self):
         color_img = cv.cvtColor(self.__grey_scale_image, cv.COLOR_GRAY2RGB)
