@@ -8,7 +8,7 @@ with open('../LICENSE') as f:
 
 setup(
     name='RRTNCTTASA',
-    version='0.0.6',
+    version='0.0.7',
     description='Robust Real-Time Non-Cooperative Target Tracking Algorithm for Space Applications',
     long_description=readme,
     author='Mikkel Anderson & Jonas Nielsen',
