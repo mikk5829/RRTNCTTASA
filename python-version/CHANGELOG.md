@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.8](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.7...v0.0.8) (2023-10-02)
+
+
+### Features
+
+* Added ContourService ([02d5730](https://github.com/mikk5829/RRTNCTTASA/commit/02d5730e92ae9597826a41cb98c0968f959deecb))
+* adding interface for all services ([afe66eb](https://github.com/mikk5829/RRTNCTTASA/commit/afe66eb20f0cc983a99886486344eec13043bca9))
+
 ## [0.0.7](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.6...v0.0.7) (2023-09-29)
 
 
