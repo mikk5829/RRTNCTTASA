@@ -15,7 +15,7 @@ class ImageService(IService):
     def __init__(self, image_path, model_name):
         super().__init__(image_path, model_name)
 
-    def get_image(self):
+    def get_image(self) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
         img = cv.imread(self.image_path, cv.IMREAD_GRAYSCALE)
 
         if img is None:
