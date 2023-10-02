@@ -2,8 +2,27 @@ import os
 from typing import Union, Any
 
 import cv2 as cv
-from cv2 import Mat
 from numpy import ndarray, dtype, generic
+
+from service.service_interface import IService
+from deprecated import deprecated
+
+
+class ImageService(IService):
+    image_path = None
+    model_name = None
+
+    def __init__(self, image_path, model_name):
+        super().__init__(image_path, model_name)
+
+    def get_image(self) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
+        img = cv.imread(self.image_path, cv.IMREAD_GRAYSCALE)
+
+        if img is None:
+            raise ValueError(f"The file {os.path.abspath(self.image_path)} is not an image.")
+
+        # return image
+        return img
 
 
 def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA):
@@ -30,6 +49,7 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA
     return cv.resize(image, dim, interpolation=inter)
 
 
+@deprecated("Use ImageService instead")
 def get_image_from_file(file_path) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
     """
     This function is used to get an image from a file
@@ -46,6 +66,7 @@ def get_image_from_file(file_path) -> Union[ndarray, ndarray[Any, dtype[generic]
     return img
 
 
+@deprecated("Use ImageService instead")
 def get_files_from_directory(folder_path) -> list[str]:
     """
     This function is used to get all the files from a folder
@@ -62,6 +83,7 @@ def get_files_from_directory(folder_path) -> list[str]:
     return files
 
 
+@deprecated("Use ImageService instead")
 def get_raw_images_from_directory_generator(folder_path) -> (str, cv.Mat):
     images_paths = get_files_from_directory(folder_path)
     for path in images_paths:
@@ -73,6 +95,7 @@ def get_raw_images_from_directory_generator(folder_path) -> (str, cv.Mat):
         yield path, image
 
 
+@deprecated("Use ImageService instead")
 def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     """
     This function is used to get all the images from a folder and return them in a dict with the filename as key
@@ -107,6 +130,7 @@ def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
     return images
 
 
+@deprecated("Use ImageService instead")
 # A function that yields the images from a folder one by one
 def get_images_from_directory_generator(folder_path) -> (str, cv.Mat):
     images = get_images_from_directory(folder_path)

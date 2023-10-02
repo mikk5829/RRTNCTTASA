@@ -1,7 +1,7 @@
 import os
 
 from image.object_detector import ObjectDetector
-from image.photo import get_raw_images_from_directory_generator
+from image.image_service import get_raw_images_from_directory_generator
 import pickle
 
 from models.pose import Translation

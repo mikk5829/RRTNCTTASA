@@ -1,6 +1,6 @@
 from image.pose_map_service import PoseMapService
 from image.object_detector import ObjectDetector
-from image.photo import get_raw_images_from_directory_generator, resize_with_aspect_ratio, get_image_from_file
+from image.image_service import get_raw_images_from_directory_generator, resize_with_aspect_ratio, get_image_from_file
 import cv2 as cv
 
 from models.pose import Pose
@@ -13,10 +13,12 @@ class Tracker:
     estimations = None  # List of old estimations
     pose_map = None  # Map of poses and images
     image_path = None  # Path to the image
+    image_service = None  # Service to get images
 
-    def __init__(self, pose_map_importer: PoseMapService, image_path):
+    def __init__(self, pose_map_importer: PoseMapService, image_path, image_service):
         self.pose_map = pose_map_importer.get_pose_map()
         self.image_path = image_path
+        self.image_service = image_service
 
     def estimate_pose_from_folder(self):
         image_generator = get_raw_images_from_directory_generator(self.image_path)
@@ -33,7 +35,7 @@ class Tracker:
             exit("No image path provided. Please provide one using the cli.")
             # Todo when estimations are present, use them to print the last pose
         # Find the object in the image
-        self.image = get_image_from_file(self.image_path)
+        self.image = self.image_service.get_image()
         object_detector = ObjectDetector()
         object = object_detector.get_object(self.image)
         print(object)

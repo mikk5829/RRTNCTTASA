@@ -16,7 +16,7 @@ class Parser:
     )
 
     parser.add_argument("--folder", help="The path to the folder of images you want to analyze")
-    parser.add_argument("--image_path", help="The path to the image you want to analyze")
+    parser.add_argument("--image-path", help="The path to the image you want to analyze")
     parser.add_argument("--path-to-model-images", help="The path to the images you want to add to the pose "
                                                        "map")
     # adding required arguments

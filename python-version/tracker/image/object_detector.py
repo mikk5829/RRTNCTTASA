@@ -4,11 +4,11 @@ from models.moments import Moments
 from models.object import Object
 
 
+# Image to Object
 class ObjectDetector:
     __tracking_object: Object = None
     __grey_scale_image = None
     __preprocessed_image = None
-    aligned_image = None
 
     def __init__(self):
         # reset the state

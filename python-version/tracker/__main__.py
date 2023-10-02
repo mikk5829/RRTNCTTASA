@@ -1,8 +1,5 @@
-# Defining main function
-import sys
-
 from cli.parser import Parser
-from image.pose_map_service import PoseMapService
+from image.contour_service import ContourService
 from tracker import Tracker
 from dependency_injector.wiring import Provide, inject
 from containers import Container
@@ -10,20 +7,20 @@ from containers import Container
 
 @inject
 def use_case(
-        pose_map_importer: PoseMapService = Provide[Container.pose_map_importer],
-        tracker: Tracker = Provide[Container.tracker]
+        tracker: Tracker = Provide[Container.tracker],
+        contour_service: ContourService = Provide[Container.contour_service]
 ) -> None:
-    tracker.estimate_pose()
+    contour_service.get_contours_from_image()
     pass
 
 
 def main():
     parser = Parser()
-
     options = parser.add_parser_get_args()
 
     container = Container()
 
+    # set the options in the container config
     for key, value in options.__dict__.items():
         if value is not None:
             container.config[key].from_value(value)
