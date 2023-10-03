@@ -14,17 +14,16 @@ class ImageService(IService):
     def __init__(self, config):
         super().__init__(config)
 
-    def get_image(self, path_override=None) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
+    def get_image(self) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
         """
         This function is used to get an image from a file
         :path_override: The path to the image
         """
-        path = path_override if path_override else self.image_path
         # read image with open cv
-        img = cv.imread(path, cv.IMREAD_GRAYSCALE)
+        img = cv.imread(self.image_path, cv.IMREAD_GRAYSCALE)
 
         if img is None:
-            raise ValueError(f"The file {os.path.abspath(path)} is not an image.")
+            raise ValueError(f"The file {os.path.abspath(self.image_path)} is not an image.")
 
         # return image
         return img
@@ -33,7 +32,8 @@ class ImageService(IService):
         images_paths = get_files_from_directory(self.path_to_model_images)
         for path in images_paths:
             try:
-                image = self.get_image(os.path.join(self.path_to_model_images, path))
+                self.image_path = (self.path_to_model_images + "/" + path)
+                image = self.get_image()
             except ValueError:
                 continue
 

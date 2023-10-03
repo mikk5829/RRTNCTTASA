@@ -4,6 +4,7 @@ from image.contour_service import ContourService
 from image.image_service import ImageService
 from image.object_service import ObjectService
 from image.pose_map_service import PoseMapService
+from service.service_interface import IService
 from tracker import Tracker
 
 
@@ -21,7 +22,8 @@ class Container(containers.DeclarativeContainer):
                                            object_service=object_service, image_service=image_service)
 
     contour_service = providers.Singleton(ContourService, config=config,
-                                          image_service=image_service, object_service=object_service)
+                                          image_service=image_service, object_service=object_service,
+                                          pose_map_service=pose_map_service)
 
     tracker = providers.Singleton(Tracker, config=config, object_service=object_service,
                                   contour_service=contour_service)

@@ -1,9 +1,6 @@
-from image.pose_map_service import PoseMapService
-from image.object_service import ObjectService
 from image.image_service import resize_with_aspect_ratio
 import cv2 as cv
 
-from models.pose import Pose
 from service.service_interface import IService
 
 
@@ -28,16 +25,20 @@ class Tracker(IService):
         This function is used to estimate the pose of an object
         :return: The pose of the object
         """
-        if self.image_path is None:
-            exit("No image path provided. Please provide one using the cli.")
-            # Todo when estimations are present, use them to print the last pose
+        # if self.image_path is None:
+        #     exit("No image path provided. Please provide one using the cli.")
+        # Todo when estimations are present, use them to print the last pose
         # Find the object in the image
         tracked_object = self.object_service.get_object()
 
+        # self.contour_service.simplify_contours()
+        trans, model = self.contour_service.get_best_match()
+
         # Compare the object to the 3D (mesh) model if available also use old information to predict the pose
         # Estimate, save and return the pose
-
-        cv.imshow("image", resize_with_aspect_ratio(tracked_object.raw_image, width=800))
-        cv.imshow("tracker", resize_with_aspect_ratio(tracked_object.aligned_image, width=800))
+        img = tracked_object.get_aligned_image()
+        cv.drawContours(img, model, -1, (255, 0, 0), 3)
+        cv.imshow("image", resize_with_aspect_ratio(tracked_object.get_raw_image(), width=800))
+        cv.imshow("tracker", resize_with_aspect_ratio(img, width=800))
         cv.waitKey()
-        return tracked_object.pose
+        return tracked_object.__pose

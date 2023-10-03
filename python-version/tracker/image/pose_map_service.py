@@ -16,19 +16,19 @@ class PoseMapService(IService):
     model_name = None
     __pose_map = None
     __pickle_name = "pose_map.pickle"
-    object_service: ObjectService = None
-    image_service: ImageService = None
+    __object_service: ObjectService = None
+    __image_service: ImageService = None
 
     def __init__(self, config, object_service, image_service):
         super().__init__(config)
-        self.object_service = object_service
-        self.image_service = image_service
+        self.__object_service = object_service
+        self.__image_service = image_service
         # create the folder for the model if it does not exist
         if not os.path.exists(self.model_name):
             os.mkdir(self.model_name)
         self.__pickle_name = self.model_name + "/" + self.__pickle_name
-        if self.path_to_model_images is not None:
-            self.set_new_pose_map()
+        # if self.path_to_model_images is not None:
+        #     self.set_new_pose_map()
 
     def get_pose_map(self):
         if self.__pose_map is None:
@@ -56,20 +56,19 @@ class PoseMapService(IService):
         """
         if self.path_to_model_images is None:
             raise ValueError("No path to model images provided. Please provide one using the cli.")
-        image_generator = self.image_service.get_raw_images_from_directory_generator()
+        image_generator = self.__image_service.get_raw_images_from_directory_generator()
         pose_map = dict()
         # create a new pose map from the images in the folder
         while image_generator:
             try:
                 # create a new pose map from the images in the folder
                 key, image = next(image_generator)
-                self.object_service.get_object()
-                tracked_object = self.object_service.get_object(image)
+                tracked_object = self.__object_service.get_object()
                 # change -0.000_-1.000_0.000.png to x, y, z from key
                 x, y, z = key.split("_")
                 z = z.split(".png")[0]
                 translation = Translation(x, y, z)
-                pose_map[translation] = tracked_object.contours
+                pose_map[translation] = tracked_object.get_relative_contour()
                 # save the pose map to a pickle file
             except StopIteration:
                 break

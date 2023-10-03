@@ -12,7 +12,10 @@ def use_case(
         pose_map_service: PoseMapService = Provide[Container.pose_map_service],
         config: dict = Provide[Container.config]
 ) -> None:
-    tracker.estimate_pose()
+    if config["path_to_model_images"] is not None:
+        pose_map_service.set_new_pose_map()
+    if config["image_path"] is not None:
+        tracker.estimate_pose()
     pass
 
 
