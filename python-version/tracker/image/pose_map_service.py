@@ -27,8 +27,6 @@ class PoseMapService(IService):
         if not os.path.exists(self.model_name):
             os.mkdir(self.model_name)
         self.__pickle_name = self.model_name + "/" + self.__pickle_name
-        # if self.path_to_model_images is not None:
-        #     self.set_new_pose_map()
 
     def get_pose_map(self):
         if self.__pose_map is None:
@@ -80,4 +78,5 @@ class PoseMapService(IService):
         file = open(self.__pickle_name, "wb")
         pickle.dump(self.__pose_map, file)
         file.close()
+        print("Pose map created successfully.")
         return True

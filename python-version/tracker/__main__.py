@@ -1,5 +1,4 @@
 from cli.parser import Parser
-from image.contour_service import ContourService
 from image.pose_map_service import PoseMapService
 from tracker import Tracker
 from dependency_injector.wiring import Provide, inject
@@ -25,6 +24,7 @@ def main():
 
     container = Container()
 
+    # Prepend all keys in options with "__"
     container.config.from_dict(options.__dict__)
 
     container.init_resources()

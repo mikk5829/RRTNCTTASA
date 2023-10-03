@@ -1,7 +1,6 @@
 import cv2 as cv
 
 from image.image_service import ImageService
-from models.moments import Moments
 from models.object import Object
 
 
@@ -14,7 +13,7 @@ class ObjectService:
         self.__image_service = image_service
 
     def get_object(self) -> Object or None:
-        self.__tracking_object = Object(self.__image_service.get_image())
+        self.__tracking_object = Object(self.__image_service.get_image(), False)
         return self.__tracking_object
 
     def set_object(self, tracked_object):

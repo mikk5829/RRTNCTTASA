@@ -2,9 +2,9 @@ class IService:
     """
     This is the interface for all services
     """
-    image_path = None
-    model_name = None
-    path_to_model_images = None
+    image_path: str = None
+    model_name: str = None
+    path_to_model_images: str = None
 
     def __init__(self, config):
         self.image_path = config["image_path"]
