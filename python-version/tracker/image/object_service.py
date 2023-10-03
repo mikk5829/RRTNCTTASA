@@ -5,16 +5,22 @@ from models.object import Object
 
 
 # Image to Object
-class ObjectDetector:
+class ObjectService:
     __tracking_object: Object = None
     __grey_scale_image = None
     __preprocessed_image = None
+    image_service = None
 
-    def __init__(self):
+    def __init__(self, image_service):
         # reset the state
         self.__tracking_object = None
         self.__grey_scale_image = None
         self.__preprocessed_image = None
+        self.image_service = image_service
+
+    def set_image(self, image):
+        self.__init__(self.image_service)
+        self.__grey_scale_image = image
 
     def __preprocess_image(self):
         # make a gaussian blur of the image to remove noise
@@ -40,6 +46,7 @@ class ObjectDetector:
                                                    self.__tracking_object.coordinates.x,
                                                    self.__tracking_object.coordinates.y)
 
+        self.__tracking_object.set_raw_image(self.__grey_scale_image)
         self.__tracking_object.set_aligned_image(image)
 
     def __detect_object(self):
@@ -55,8 +62,12 @@ class ObjectDetector:
         self.__tracking_object = Object(moments, [cnt])
         self.__align_image()
 
-    def get_object(self, image):
-        self.__grey_scale_image = image
+    def get_object(self, image=None):
+        if self.__tracking_object is not None:
+            return self.__tracking_object
+        if image is not None:
+            self.set_image(image)
+        self.__grey_scale_image = self.image_service.get_image()
         self.__detect_object()
         return self.__tracking_object
 
