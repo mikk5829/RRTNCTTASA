@@ -34,11 +34,12 @@ class ContourService(IService):
         for translation, model_contour in pose_map.items():
             local_score = cv.matchShapes(contours, model_contour, 1, 0.0)
             if best_score > local_score:  # if the score is better than the previous best score
-                # plot the best match
-                plt.plot(contours[:, 0, 0], contours[:, 0, 1], "r")
-                plt.plot(model_contour[:, 0, 0], model_contour[:, 0, 1], "b")
-                plt.title(f"Score: {local_score}")
-                plt.show()
+                if local_score < 0.1:
+                    # plot the best match
+                    plt.plot(contours[:, 0, 0], contours[:, 0, 1], "r")
+                    plt.plot(model_contour[:, 0, 0], model_contour[:, 0, 1], "b")
+                    plt.title(f"Score: {local_score}")
+                    plt.show()
                 best_score = local_score  # set the new best score
                 found_translation = translation  # set the new best translation
                 found_model_contour = model_contour  # set the new best model contour

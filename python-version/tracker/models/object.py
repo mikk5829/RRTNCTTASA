@@ -24,13 +24,13 @@ class Object:
     """
     __moments: Moments = None
     __relative_contour: cv.UMat = None
-    __aligned_image = None
+    __aligned_image: cv.UMat = None
     __corners: Corners = None
     __bounding_box = None
-    __raw_image = None
+    __raw_image: cv.UMat = None
     __pose: Pose = None
     __threshold_image: cv.UMat = None
-    __contour = None
+    __contour: cv.UMat = None
 
     def __init__(self, raw_image, simplify_contours=False):
         self.__raw_image = raw_image
@@ -95,6 +95,9 @@ class Object:
         if self.__aligned_image is None:
             self.__align_image()
         return self.__aligned_image
+
+    def get_raw_image(self) -> cv.UMat or None:
+        return self.__raw_image
 
     def __set_bounding_box(self):
         ct = self.__contour.squeeze()

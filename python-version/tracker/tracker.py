@@ -35,8 +35,8 @@ class Tracker(IService):
         # Compare the object to the 3D (mesh) model if available also use old information to predict the pose
         # Estimate, save and return the pose
         img = tracked_object.get_aligned_image()
-        cv.drawContours(img, model, -1, (255, 0, 0), 3)
-        cv.imshow("image", resize_with_aspect_ratio(tracked_object.get_raw_image(), width=800))
-        cv.imshow("tracker", resize_with_aspect_ratio(img, width=800))
-        cv.waitKey()
+        # cv.drawContours(img, model, -1, (255, 0, 0), 3)
+        # cv.imshow("image", resize_with_aspect_ratio(tracked_object.get_raw_image(), width=800))
+        # cv.imshow("tracker", resize_with_aspect_ratio(img, width=800))
+        # cv.waitKey()
         return None
