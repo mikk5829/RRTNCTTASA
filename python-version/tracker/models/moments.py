@@ -34,6 +34,10 @@ class Coordinates(SimpleCoordinates):
         return super().__str__() + f", orientation in radians: {self.orientation:.4f}, orientation in degrees:" \
                                    f" {self.orientation_degrees:.4f}"
 
+    # as tuple
+    def as_tuple(self):
+        return self.x, self.y
+
 
 class Moments:
     """
