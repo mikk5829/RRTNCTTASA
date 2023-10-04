@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.9](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.8...v0.0.9) (2023-10-04)
+
+
+### Features
+
+* added plotting of contours and loading bar ([1cdff7e](https://github.com/mikk5829/RRTNCTTASA/commit/1cdff7ee40fa00679bfb5fe89c1fa0632af1f3e8))
+* Implemented simplifying contours ([5459e79](https://github.com/mikk5829/RRTNCTTASA/commit/5459e79b427c72b923d952ac75afbdd6d02d036c))
+
+
+### Bug Fixes
+
+* better handling of global configs ([45e1061](https://github.com/mikk5829/RRTNCTTASA/commit/45e1061e87f797ea8eacdecd2e9aa33662749cbf))
+
 ## [0.0.8](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.7...v0.0.8) (2023-10-02)
 
 
