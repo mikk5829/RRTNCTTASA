@@ -20,3 +20,4 @@ jobs:
           bump-patch-for-minor-pre-major: true
           path: python-version
           package-name: RRTNCTTASA
+          default-branch: main
