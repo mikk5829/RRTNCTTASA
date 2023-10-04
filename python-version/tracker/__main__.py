@@ -1,5 +1,5 @@
 from cli.parser import Parser
-from image.contour_service import ContourService
+from image.pose_map_service import PoseMapService
 from tracker import Tracker
 from dependency_injector.wiring import Provide, inject
 from containers import Container
@@ -8,9 +8,13 @@ from containers import Container
 @inject
 def use_case(
         tracker: Tracker = Provide[Container.tracker],
-        contour_service: ContourService = Provide[Container.contour_service]
+        pose_map_service: PoseMapService = Provide[Container.pose_map_service],
+        config: dict = Provide[Container.config]
 ) -> None:
-    contour_service.get_contours_from_image()
+    if config["path_to_model_images"] is not None:
+        pose_map_service.set_new_pose_map()
+    if config["image_path"] is not None:
+        tracker.estimate_pose()
     pass
 
 
@@ -20,10 +24,8 @@ def main():
 
     container = Container()
 
-    # set the options in the container config
-    for key, value in options.__dict__.items():
-        if value is not None:
-            container.config[key].from_value(value)
+    # Prepend all keys in options with "__"
+    container.config.from_dict(options.__dict__)
 
     container.init_resources()
     container.wire(modules=[__name__])

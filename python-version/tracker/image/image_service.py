@@ -1,21 +1,26 @@
 import os
 from typing import Union, Any
+from tqdm import tqdm
 
 import cv2 as cv
 from numpy import ndarray, dtype, generic
 
 from service.service_interface import IService
-from deprecated import deprecated
 
 
 class ImageService(IService):
     image_path = None
     model_name = None
 
-    def __init__(self, image_path, model_name):
-        super().__init__(image_path, model_name)
+    def __init__(self, config):
+        super().__init__(config)
 
     def get_image(self) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
+        """
+        This function is used to get an image from a file
+        :path_override: The path to the image
+        """
+        # read image with open cv
         img = cv.imread(self.image_path, cv.IMREAD_GRAYSCALE)
 
         if img is None:
@@ -23,6 +28,17 @@ class ImageService(IService):
 
         # return image
         return img
+
+    def get_raw_images_from_directory_generator(self):
+        images_paths = get_files_from_directory(self.path_to_model_images)
+        for path in tqdm(images_paths, desc="Creating pose map", unit="image", colour="green"):
+            try:
+                self.image_path = (self.path_to_model_images + "/" + path)
+                image = self.get_image()
+            except ValueError:
+                continue
+
+            yield path, image
 
 
 def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA):
@@ -49,24 +65,6 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv.INTER_AREA
     return cv.resize(image, dim, interpolation=inter)
 
 
-@deprecated("Use ImageService instead")
-def get_image_from_file(file_path) -> Union[ndarray, ndarray[Any, dtype[generic]]]:
-    """
-    This function is used to get an image from a file
-    :param file_path: the path to the file with the image
-    :return: the image
-    """
-    # read image with open cv
-    img = cv.imread(file_path, cv.IMREAD_GRAYSCALE)
-
-    if img is None:
-        raise ValueError(f"The file {os.path.abspath(file_path)} is not an image.")
-
-    # return image
-    return img
-
-
-@deprecated("Use ImageService instead")
 def get_files_from_directory(folder_path) -> list[str]:
     """
     This function is used to get all the files from a folder
@@ -81,58 +79,3 @@ def get_files_from_directory(folder_path) -> list[str]:
 
     # return list with files
     return files
-
-
-@deprecated("Use ImageService instead")
-def get_raw_images_from_directory_generator(folder_path) -> (str, cv.Mat):
-    images_paths = get_files_from_directory(folder_path)
-    for path in images_paths:
-        try:
-            image = get_image_from_file(os.path.join(folder_path, path))
-        except ValueError:
-            continue
-
-        yield path, image
-
-
-@deprecated("Use ImageService instead")
-def get_images_from_directory(folder_path) -> dict[str, cv.Mat]:
-    """
-    This function is used to get all the images from a folder and return them in a dict with the filename as key
-    :param folder_path: the path to the folder with the images
-    :return: dict with images
-    """
-    images = dict()
-    file_counter = 1
-    # find files in folder
-    for filename in sorted(os.listdir(folder_path)):
-        # read images with open cv
-        img = cv.imread(os.path.join(folder_path, filename),
-                        cv.IMREAD_GRAYSCALE)  # TODO might be better to skip this step and only read the images when needed
-        filename_number = filename.split(".")[0]
-
-        if img is not None:
-            # make sure the filename_number is a number and increasing each iteration
-            try:
-                int(filename_number)
-            except ValueError:
-                raise ValueError(f"The file {filename} is not named correctly. It should be a number.")
-            if int(filename_number) != file_counter:
-                raise ValueError("The images in the folder are not named correctly. "
-                                 "The images should be named in ascending order starting from 1. "
-                                 f"The current image has number: {filename_number}, but should have number: {file_counter}")
-
-            # append images to list
-            images[filename] = img
-            file_counter += 1
-
-    # return dict with images
-    return images
-
-
-@deprecated("Use ImageService instead")
-# A function that yields the images from a folder one by one
-def get_images_from_directory_generator(folder_path) -> (str, cv.Mat):
-    images = get_images_from_directory(folder_path)
-    for key in images.keys():
-        yield (key, images[key])
