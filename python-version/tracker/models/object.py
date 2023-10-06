@@ -43,15 +43,15 @@ class Object:
         blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
 
         # make a threshold of the blurred image to get a binary image
-        # ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
-        ret, self.__threshold_image = cv.threshold(blur_image, 25, 255, cv.THRESH_BINARY)
+        ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
+        # ret, self.__threshold_image = cv.threshold(blur_image, 25, 255, cv.THRESH_BINARY)
 
         self.__moments = Moments(self.__threshold_image)
 
         coordinates = self.__moments.get_coordinates()
-        self.__threshold_image = rotate_image_around_center_of_mass(self.__threshold_image,
-                                                                    coordinates.orientation_degrees,
-                                                                    coordinates.x, coordinates.y)
+        # self.__threshold_image = rotate_image_around_center_of_mass(self.__threshold_image,
+        #                                                             coordinates.orientation_degrees,
+        #                                                             coordinates.x, coordinates.y)
 
     def __simplify_contours(self):
         """

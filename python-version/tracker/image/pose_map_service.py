@@ -4,7 +4,7 @@ import pickle
 
 from image.image_service import ImageService
 from image.object_service import ObjectService
-from models.pose import Translation
+from models.pose import Rotation, Translation
 from service.service_interface import IService
 
 
@@ -62,11 +62,10 @@ class PoseMapService(IService):
                 # create a new pose map from the images in the folder
                 key, image = next(image_generator)
                 tracked_object = self.__object_service.get_object()
-                # change -0.000_-1.000_0.000.png to x, y, z from key
-                x, y, z = key.split("_")
-                z = z.split(".png")[0]
-                translation = Translation(x, y, z)
-                pose_map[translation] = tracked_object.get_relative_contour()
+                theta, phi = key.split("_")
+                phi = phi.split(".png")[0]
+                rotation = Rotation(None, float(phi), float(theta))
+                pose_map[rotation] = tracked_object.get_relative_contour()
                 # save the pose map to a pickle file
             except StopIteration:
                 break

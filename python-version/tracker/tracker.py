@@ -1,6 +1,9 @@
+from matplotlib import pyplot as plt
+
 from image.image_service import resize_with_aspect_ratio
 import cv2 as cv
 
+from models.object import Object
 from service.service_interface import IService
 
 
@@ -30,11 +33,36 @@ class Tracker(IService):
         tracked_object = self.__object_service.get_object()
 
         # self.contour_service.simplify_contours()
-        trans, model = self.__contour_service.get_best_match()
+        rotation, model = self.__contour_service.get_best_match(True)
+
+        model_contour_length = len(model)
+
+        x = 0
+        y = 0
+        x_values = []
+        y_values = []
+
+        for l in model:
+            x = x + l[0][0]
+            y = y + l[0][1]
+            x_values.append(l[0][0])
+            y_values.append(l[0][1])
+
+        x /= model_contour_length
+        y /= model_contour_length
+
+        print(x, y)
+
+        # find the length from x,y to all points in the contour
+
+        plt.plot(x_values, y_values, "b")
+        plt.show()
+
+        # find
 
         # Compare the object to the 3D (mesh) model if available also use old information to predict the pose
         # Estimate, save and return the pose
-        img = tracked_object.get_aligned_image()
+        # img = tracked_object.get_aligned_image()
         # cv.drawContours(img, model, -1, (255, 0, 0), 3)
         # cv.imshow("image", resize_with_aspect_ratio(tracked_object.get_raw_image(), width=800))
         # cv.imshow("tracker", resize_with_aspect_ratio(img, width=800))
