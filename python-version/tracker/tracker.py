@@ -55,8 +55,8 @@ class Tracker(IService):
 
         # find the length from x,y to all points in the contour
 
-        plt.plot(x_values, y_values, "b")
-        plt.show()
+        # plt.plot(x_values, y_values, "b")
+        # plt.show()
 
         # find
 

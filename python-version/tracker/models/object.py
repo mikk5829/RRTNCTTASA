@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 from models.moments import Moments, SimpleCoordinates
 import cv2 as cv
 
@@ -46,9 +49,7 @@ class Object:
         ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
         # ret, self.__threshold_image = cv.threshold(blur_image, 25, 255, cv.THRESH_BINARY)
 
-        self.__moments = Moments(self.__threshold_image)
-
-        coordinates = self.__moments.get_coordinates()
+        # coordinates = self.__moments.get_coordinates()
         # self.__threshold_image = rotate_image_around_center_of_mass(self.__threshold_image,
         #                                                             coordinates.orientation_degrees,
         #                                                             coordinates.x, coordinates.y)
@@ -57,7 +58,7 @@ class Object:
         """
         This function is used to simplify the contours of the object
         """
-        epsilon = 0.002 * cv.arcLength(self.__contour, True)
+        epsilon = 0.001 * cv.arcLength(self.__contour, True)
         approx = cv.approxPolyDP(self.__contour, epsilon, True)
         self.__contour = approx
 
@@ -69,6 +70,14 @@ class Object:
 
         if simplify_contours:
             self.__simplify_contours()
+
+        # find bounding box coordinates and crop the image
+        img_x, img_y, img_width, img_height = cv.boundingRect(self.__contour)
+        self.__threshold_image = self.__threshold_image[img_y:img_y + img_height, img_x:img_x + img_width]
+
+        self.__threshold_image = cv.resize(self.__threshold_image, (800, 800), interpolation=cv.INTER_AREA)
+
+        self.__moments = Moments(self.__threshold_image)
 
         coordinates = self.__moments.get_coordinates()
         # minus the center of mass from the contour to get the relative contour
@@ -118,6 +127,12 @@ class Object:
 
     def get_relative_contour(self) -> cv.UMat:
         return self.__relative_contour
+
+    def get_contour(self) -> cv.UMat:
+        return self.__contour
+
+    def get_moments(self) -> Moments:
+        return self.__moments
 
     def __str__(self) -> str:
         return f"Coordinates: {self.__moments.get_coordinates()}"

@@ -38,6 +38,10 @@ class Coordinates(SimpleCoordinates):
     def as_tuple(self):
         return self.x, self.y
 
+    # get center of mass
+    def get_center_of_mass(self):
+        return self.x, self.y
+
 
 class Moments:
     """

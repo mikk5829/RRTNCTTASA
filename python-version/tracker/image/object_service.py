@@ -13,7 +13,7 @@ class ObjectService:
         self.__image_service = image_service
 
     def get_object(self) -> Object or None:
-        self.__tracking_object = Object(self.__image_service.get_image(), False)
+        self.__tracking_object = Object(self.__image_service.get_image(), True)
         return self.__tracking_object
 
     def set_object(self, tracked_object):

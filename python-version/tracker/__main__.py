@@ -3,6 +3,7 @@ from image.pose_map_service import PoseMapService
 from tracker import Tracker
 from dependency_injector.wiring import Provide, inject
 from containers import Container
+import seaborn as sns
 
 
 @inject
@@ -19,6 +20,10 @@ def use_case(
 
 
 def main():
+    sns.set()
+    sns.set_context("paper", font_scale=1.2)
+    # seaborn set retina display
+
     parser = Parser()
     options = parser.add_parser_get_args()
 
