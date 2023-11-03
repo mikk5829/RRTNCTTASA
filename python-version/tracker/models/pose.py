@@ -12,7 +12,22 @@ class Rotation:
         self.yaw = yaw
 
     def __str__(self):
-        return f"roll: {self.roll}, pitch: {self.pitch}, yaw: {self.yaw}"
+        # 2 decimal places and roll, pitch and yaw can be None
+        if self.roll is None:
+            self.roll = 0
+        if self.pitch is None:
+            self.pitch = 0
+        if self.yaw is None:
+            self.yaw = 0
+
+        return f"roll: {self.roll:.2f}, pitch: {self.pitch:.2f}, yaw: {self.yaw:.2f}"
+
+    # define sort order to sort ascending by pitch and then yaw can be None
+    def __lt__(self, other):
+        if self.pitch < other.pitch:
+            return True
+        else:
+            return False
 
 
 class Translation:
@@ -29,7 +44,13 @@ class Translation:
         self.z = z
 
     def __str__(self):
-        return f"x: {self.x}, y: {self.y}, z: {self.z}"
+        if self.x is None:
+            self.x = 0
+        if self.y is None:
+            self.y = 0
+        if self.z is None:
+            self.z = 0
+        return f"x: {self.x:.2f}, y: {self.y:.2f}, z: {self.z:.2f}"
 
 
 class Pose(Translation, Rotation):
@@ -57,3 +78,9 @@ class Pose(Translation, Rotation):
         :param yaw: The rotation around the z-axis
         """
         Rotation.__init__(self, roll, pitch, yaw)
+
+    def __lt__(self, other):
+        Rotation.__lt__(self, other)
+
+    def __str__(self):
+        return f"translation: {Translation.__str__(self)}, rotation: {Rotation.__str__(self)}"
