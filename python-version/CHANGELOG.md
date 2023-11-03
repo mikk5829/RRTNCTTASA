@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.9...v0.0.10) (2023-10-06)
+
+
+### Features
+
+* started roll estimation ([cac2c1d](https://github.com/mikk5829/RRTNCTTASA/commit/cac2c1d8fcb73142046587325bbd15e65924e2b3))
+
 ## [0.0.9](https://github.com/mikk5829/RRTNCTTASA/compare/v0.0.8...v0.0.9) (2023-10-04)
 
 
