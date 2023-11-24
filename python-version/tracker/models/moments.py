@@ -47,15 +47,15 @@ class Moments:
     """
     This class is used to calculate the moments of an object
     """
-    binary_image = None
+    __contour = None
     __coordinates: Coordinates = None
 
-    def __init__(self, binary_image):
-        self.binary_image = binary_image
+    def __init__(self, contour):
+        self.__contour = contour
         self.__set_coordinates()
 
     def __set_coordinates(self):
-        center_of_mass = cv.moments(self.binary_image)
+        center_of_mass = cv.moments(self.__contour)
         x = int(center_of_mass["m10"] / center_of_mass["m00"])
         y = int(center_of_mass["m01"] / center_of_mass["m00"])
         orientation = math.atan2(center_of_mass["mu11"], center_of_mass["mu20"] - center_of_mass["mu02"]) / 2

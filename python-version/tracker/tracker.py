@@ -33,7 +33,7 @@ class Tracker(IService):
         tracked_object = self.__object_service.get_object()
 
         # self.contour_service.simplify_contours()
-        rotation, model = self.__contour_service.get_best_match(True)
+        rotation, model = self.__contour_service.get_best_match()
 
         model_contour_length = len(model)
 

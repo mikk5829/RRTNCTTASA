@@ -19,6 +19,7 @@ class Parser:
     parser.add_argument("--image-path", help="The path to the image you want to analyze")
     parser.add_argument("--path-to-model-images", help="The path to the images you want to add to the pose "
                                                        "map")
+    parser.add_argument("-v", "--verbose", help="increase output verbosity, and show plots", action="store_true")
     # adding required arguments
     parser.add_argument("model_name", help="The name for the model you want to use, if no image path is provided, "
                                            "then the output will be the last Pose recorded")
