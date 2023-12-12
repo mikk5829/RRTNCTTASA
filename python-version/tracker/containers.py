@@ -16,7 +16,7 @@ class Container(containers.DeclarativeContainer):
 
     image_service = providers.Singleton(ImageService, config=config)
 
-    object_service = providers.Singleton(ObjectService, image_service=image_service)
+    object_service = providers.Singleton(ObjectService, config=config, image_service=image_service)
 
     pose_map_service = providers.Singleton(PoseMapService, config=config,
                                            object_service=object_service, image_service=image_service)

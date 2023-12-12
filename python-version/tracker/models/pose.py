@@ -7,9 +7,12 @@ class Rotation:
     yaw: float = None  # Rotation around the z-axis
 
     def __init__(self, roll: float = None, pitch: float = None, yaw: float = None):
-        self.roll = roll
-        self.pitch = pitch
-        self.yaw = yaw
+        if roll is not None:
+            self.roll = float(roll)
+        if pitch is not None:
+            self.pitch = float(pitch)
+        if yaw is not None:
+            self.yaw = float(yaw)
 
     def __str__(self):
         # 2 decimal places and roll, pitch and yaw can be None
@@ -29,6 +32,15 @@ class Rotation:
         else:
             return False
 
+    def set_roll(self, roll: float):
+        self.roll = roll
+
+    def set_pitch(self, pitch: float):
+        self.pitch = pitch
+
+    def set_yaw(self, yaw: float):
+        self.yaw = yaw
+
 
 class Translation:
     """
@@ -38,7 +50,10 @@ class Translation:
     y: float = None
     z: float = None
 
-    def __init__(self, x: float = None, y: float = None, z: float = None):
+    def __init__(self, x: float or list = None, y: float = None, z: float = None):
+        # if x is a list, unpack it
+        if isinstance(x, list):
+            x, y, z = x
         self.x = x
         self.y = y
         self.z = z
@@ -53,34 +68,43 @@ class Translation:
         return f"x: {self.x:.2f}, y: {self.y:.2f}, z: {self.z:.2f}"
 
 
-class Pose(Translation, Rotation):
+class Pose:
     """
     Pose of an object in 3D space
     """
+    translation: Translation = None
+    rotation: Rotation = None
+    channel: int = None
 
-    def __init__(self, translation: Translation = None, rotation: Rotation = None):
-        if translation is not None:
-            Translation.__init__(self, translation.x, translation.y, translation.z)
-        if rotation is not None:
-            Rotation.__init__(self, rotation.roll, rotation.pitch, rotation.yaw)
-
-    def set_translation(self, x: float, y: float, z: float):
-        """
-        Set the location of the object
-        """
-        Translation.__init__(self, x, y, z)
-
-    def set_rotation(self, roll: float, pitch: float, yaw: float):
-        """
-        Set the rotation of the object
-        :param roll: The rotation around the x-axis
-        :param pitch: The rotation around the y-axis
-        :param yaw: The rotation around the z-axis
-        """
-        Rotation.__init__(self, roll, pitch, yaw)
-
-    def __lt__(self, other):
-        Rotation.__lt__(self, other)
+    def __init__(self, translation: Translation, rotation: Rotation, channel: int = None):
+        self.translation = translation
+        self.rotation = rotation
+        if channel is not None:
+            self.channel = channel
 
     def __str__(self):
-        return f"translation: {Translation.__str__(self)}, rotation: {Rotation.__str__(self)}"
+        # self.channel can be None
+        if self.channel is None:
+            self.channel = 0
+        return f"channel: {self.channel}, translation: {self.translation}, rotation: {self.rotation}"
+
+    def __lt__(self, other):
+        if self.channel < other.channel:
+            return True
+        else:
+            return False
+
+    def get_translation(self):
+        return self.translation
+
+    def get_rotation(self):
+        return self.rotation
+
+    def set_roll(self, roll: float):
+        self.rotation.set_roll(roll)
+
+    def get_channel(self):
+        return self.channel
+
+    def set_rotation(self, rotation: Rotation):
+        self.rotation = rotation

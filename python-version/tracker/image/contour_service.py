@@ -2,43 +2,137 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from scipy.signal import find_peaks
+import math
 
 from image.image_service import ImageService
 from image.object_service import ObjectService
 from image.pose_map_service import PoseMapService
 from models.object import Object
-from models.pose import Pose, Rotation
+from models.pose import Pose, Rotation, Translation
 from service.service_interface import IService
 
 
-def shift_using_peaks(x, y):
-    # find the index of the highest value in x and y
-    x_max_index = x.idxmax()
-    y_max_index = y.idxmax()
+def custom_uniform_interpolation(angle, dist):
+    # Custom uniform interpolation to make X uniformly distributed between 0 and 360 degrees with spacing of 1 degree.
 
-    # find the index of the lowest value in x and y
-    x_min_index = x.idxmin()
-    y_min_index = y.idxmin()
+    # Ensure that X is within [0, 360] and sorted in ascending order.
+    angle = np.mod(angle, 360)
+    sorted_idx = np.argsort(angle)
+    angle = angle[sorted_idx]
+    dist = dist[sorted_idx]
 
-    # find the difference between the two
-    max_diff = x_max_index - y_max_index
-    return max_diff
+    # Prepare the data for interpolation.
+    a = (dist[sorted_idx[0]] - dist[sorted_idx[-1]]) / abs(angle[sorted_idx[-1]] - angle[sorted_idx[0]] - 360)
+
+    XY_end = [359, dist[sorted_idx[-1]] + a * (359 - angle[sorted_idx[-1]])]
+    XY_1 = [0, dist[sorted_idx[0]] + a * (0 - angle[sorted_idx[0]])]
+
+    angle = np.concatenate(([XY_1[0]], angle, [XY_end[0]]))
+    dist = np.concatenate(([XY_1[1]], dist, [XY_end[1]]))
+
+    # Initialize interpolated signal arrays.
+    interpolated_X = np.arange(360)
+    interpolated_Y = np.zeros(360)
+
+    # Perform custom linear interpolation for each degree.
+    for i, current_degree in enumerate(interpolated_X):
+        # Find the closest points in X for interpolation.
+        # print(np.size(X))
+        try:
+            lower_idx = np.where(angle <= current_degree)[0][-1]
+        except:
+            lower_idx = None
+        try:
+            upper_idx = np.where(angle > current_degree)[0][0]
+        except:
+            upper_idx = None
+
+        if lower_idx is None or upper_idx is None:
+            # If outside the original range, use the nearest endpoint.
+            if current_degree <= angle[0]:
+                lower_idx = 0
+                upper_idx = 1
+            else:
+                lower_idx = len(angle) - 2
+                upper_idx = len(angle) - 1
+
+        # Interpolation weights.
+        alpha = (current_degree - angle[lower_idx]) / (angle[upper_idx] - angle[lower_idx])
+
+        # Custom linear interpolation.
+        interpolated_Y[i] = (1 - alpha) * dist[lower_idx] + alpha * dist[upper_idx]
+
+    return interpolated_Y
 
 
-# def shift_own_method(x, y):
-#     x = pd.Series(x[1], index=x[0])
-#     y = pd.Series(y[1], index=y[0])
-#     # find peaks in x
-#     peaks_x, _ = find_peaks(x, prominence=1)  # find_peaks(x, prominence=1, width=3, distance=5, height=0.7 * max(
-#     # x.values))
-#     # find peaks in y
-#     peaks_y, _ = find_peaks(y, prominence=1)  # find_peaks(y, prominence=1, width=3, distance=5, height=0.7 * max(
-#     # y.values))
-#     # return the values in x and y at the peaks
-#     peaks_x = x.iloc[peaks_x]
-#     peaks_y = y.iloc[peaks_y]
-#     return peaks_x, peaks_y
+def XYZ(width, height, CoM, fs):
+    m = 1
+    mm = 1e-3
+    um = 1e-6
+
+    # An Effective Focal Length of:
+    EFL_far = 20 * mm
+
+    # and a pixel size on the CCD of:
+    CCDy = 8.6 * um
+
+    # What is the distance from the camera to the model in Blender?
+    zm = 10 * m
+    f = 20 * mm
+
+    # The bigger the scale factor, the closer it is to us
+    z = zm / fs
+
+    cx = math.floor(width / 2)
+    cy = math.floor(height / 2)
+    px = ((CoM[0] - cx) * CCDy * z) / f
+    py = ((CoM[1] - cy) * CCDy * z) / f
+
+    return Translation([px, py, z])
+
+
+def calculate_roll(found_object: Object, tracked_object: Object):
+    curves = []
+    for local_object in [found_object, tracked_object]:
+        object_contour = local_object.get_contour()
+        object_x = local_object.get_moments().get_coordinates().x
+        object_y = local_object.get_moments().get_coordinates().y
+        # Calculate the distance between every point and the CoM
+        object_dist = np.sqrt((object_contour[:, :, 0] - object_x) ** 2 + (object_contour[:, :, 1] - object_y) ** 2)
+        # normalize the distances
+        object_dist -= np.min(object_dist)
+        object_dist /= np.max(object_dist)
+        # Calculate the angle between every point and the CoM
+        object_angle = np.degrees(np.arctan2(object_contour[:, :, 1] - object_y,
+                                             object_contour[:, :, 0] - object_x))
+        # convert angles to degrees
+        object_angle = np.mod(object_angle, 360)
+
+        # sort angles from 0 to 360 and also the corresponding distances
+        object_angle, object_dist = zip(*sorted(zip(object_angle, object_dist)))
+
+        object_dist = np.asarray(object_dist).squeeze()
+        object_angle = np.asarray(object_angle).squeeze()
+
+        curves.append(custom_uniform_interpolation(object_angle, object_dist))
+
+    # unpack the curves
+    parametric_curve = curves[0]
+    parametric_curve2 = curves[1]
+
+    mult_sum = np.zeros(parametric_curve.shape[0])
+    for i in range(len(mult_sum)):
+        mult_sum[i] = np.dot(parametric_curve, np.roll(parametric_curve2, -i))
+
+    # Find the index of the maximum value.
+    roll = np.argmax(mult_sum)
+    max_val = np.max(mult_sum)
+
+    rotation = found_object.get_rotation()
+
+    rotation.set_roll(roll)
+
+    return rotation, max_val
 
 
 class ContourService(IService):
@@ -55,98 +149,49 @@ class ContourService(IService):
         self.__object_service = object_service
         self.__pose_map_service = pose_map_service
 
-    def get_best_match(self) -> (Rotation, cv.UMat):
+    def get_best_match(self):
         tracked_object = self.__object_service.get_object()
-        contour = tracked_object.get_contour()
+        tracked_object_contour = tracked_object.get_contour()
+        tracked_object_com = tracked_object.get_moments().get_coordinates().x, tracked_object.get_moments().get_coordinates().y
+        # find de n bedste matches med contour
+        # ud af dem, så lav krydskorrelation og find den bedste
+        # returner det pose
 
         # match the contours to the model
         pose_map = self.__pose_map_service.get_pose_map()
         best_score = 1  # initialize with the worst score
         found_pose: Pose
-        found_object: Object = None
+        # list of objects
+        found_objects: list[Object] = []
 
         for pose, tracking_object in pose_map.items():
-            local_score = cv.matchShapes(contour, tracking_object.get_contour(), 1, 0.0)
+            local_score = cv.matchShapes(tracked_object_contour, tracking_object.get_contour(), 1, 0.0)
 
-            if best_score > local_score:  # if the score is better than the previous best score
-                best_score = local_score  # set the new best score
-                found_pose = pose  # set the new best translation
-                found_object = tracking_object  # set the new best model contour
+            if local_score < 0.05:
+                found_objects.append(tracking_object)
 
-        # find COM from the model contour
-        found_model_contour = found_object.get_contour()
-
-        if self.verbose:
-            fig = plt.figure()
-            ax = fig.add_subplot()
-            # plot the best match
-            plt.plot(contour[:, 0, 0], contour[:, 0, 1], "r")
-            plt.plot(found_model_contour[:, 0, 0], found_model_contour[:, 0, 1], "b")
+        found_rotation_list = []
+        for found_object in found_objects:
+            # plot the found_object, tracked_object
+            plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
+            plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
             plt.title(f"Contour matching", wrap=True)
-            plt.suptitle(f"Score: {best_score:.2f}, {found_pose}", fontsize=10)
+            plt.suptitle(found_object.get_rotation(), wrap=True)
             plt.xlabel("x")
             plt.ylabel("y")
             plt.plot(tracked_object.coordinates.x, tracked_object.coordinates.y, "r*")
             plt.plot(found_object.coordinates.x, found_object.coordinates.y, "b*")
-            plt.legend(["Model", "Found", "COM", "Found COM"])
+            plt.legend(["Image", "3D Model", "Image COM", "3D Model COM"])
             plt.show()
+            found_rotation_list.append(calculate_roll(found_object, tracked_object))
 
-        # find the distance from the COM to all points in the model contour
-        # calculate the distance between the COM and the points in the contours
-        angle = np.arctan2(contour[:, 0, 1] - tracked_object.coordinates.y,
-                           contour[:, 0, 0] - tracked_object.coordinates.x)
-        dist = np.sqrt((tracked_object.coordinates.x - contour[:, 0, 0]) ** 2 + (
-                tracked_object.coordinates.y - contour[:, 0, 1]) ** 2)
+        found_rotation_list = dict(found_rotation_list)
 
-        # calculate the angle between the COM and the points in the contours
-        angle_found = np.arctan2(found_model_contour[:, 0, 1] - found_object.coordinates.y,
-                                 found_model_contour[:, 0, 0] - found_object.coordinates.x)
-        dist_found = np.sqrt((found_object.coordinates.x - found_model_contour[:, 0, 0]) ** 2 + (
-                found_object.coordinates.y - found_model_contour[:, 0, 1]) ** 2)
+        # find the key with the highest value
+        found_rotation = max(found_rotation_list, key=found_rotation_list.get)
 
-        angle_found = np.rad2deg(angle_found) + 180
-        angle = np.rad2deg(angle) + 180
+        tracked_object.set_rotation(found_rotation)
 
-        # sort angles from smallest to largest and sort the distances accordingly
-        angle, dist = zip(*sorted(zip(angle, dist)))
-        angle_found, dist_found = zip(*sorted(zip(angle_found, dist_found)))
+        print(tracked_object.get_rotation())
 
-        # Spline interpolation of dist and angle, such that the length is that same as angle_found
-        dist = np.interp(angle_found, angle, dist)
-        angle = np.interp(angle_found, angle, angle)
-
-        # convert to series
-        pd_angle = pd.Series(dist, index=angle)
-        pd_angle_found = pd.Series(dist_found, index=angle_found)
-
-        # plot the distance and angle for
-        plt.plot(angle, dist, "r")
-        plt.plot(angle_found, dist_found, "b")
-        # Wrap title in matplotlib plot
-        plt.title(f"2D shape matching", wrap=True)
-        plt.xlabel("Angle in degrees")
-        plt.ylabel("Distance")
-        plt.legend(["Model", "Found"])
-        plt.show()
-
-        # find the best match between the two
-        # shift the found contour to the best match
-        # best_match_dist, best_match_dist_found = shift_for_maximum_correlation(pd_angle, pd_angle_found)
-        angle_diff = shift_using_peaks(pd_angle, pd_angle_found)
-
-        print(f"roll is: {angle_diff:.2f}")
-
-        # minus the angle_diff from angle and make sure the angle is between 0 and 360
-        angle = (angle - angle_diff) % 360
-        angle, dist = zip(*sorted(zip(angle, dist)))
-        plt.plot(angle, dist, "r")
-        plt.plot(angle_found, dist_found, "b")
-        # Wrap title in matplotlib plot
-        plt.title(f"2D shape matching", wrap=True)
-        plt.xlabel("Angle in degrees")
-        plt.ylabel("Distance")
-        plt.legend(["Model", "Found"])
-        plt.show()
-
-        # set rotation TODO
-        return found_pose, found_model_contour
+        return 0

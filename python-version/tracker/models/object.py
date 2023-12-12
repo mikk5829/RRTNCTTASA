@@ -4,7 +4,7 @@ import numpy as np
 from models.moments import Coordinates, Moments, SimpleCoordinates
 import cv2 as cv
 
-from models.pose import Pose
+from models.pose import Pose, Rotation, Translation
 
 
 def dynamic_threshold(blur_image, top_left, bottom_right, background_threshold, acc_img):
@@ -70,28 +70,31 @@ class Object:
     __corners: Corners = None
     __bounding_box = None
     __raw_image: cv.UMat = None
-    __pose: Pose = None
+    __rotation: Rotation = None
     __threshold_image: cv.UMat = None
     __contour: cv.UMat = None
+    __verbose = False
+    __satellite_points = None
 
-    def __init__(self, raw_image, simplify_contours=False):
+    def __init__(self, raw_image, simplify_contours=False, verbose=False, is_model=False):
+        self.__verbose = verbose
         self.__raw_image = raw_image
-        self.__preprocess_image()
+        self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
         self.__set_bounding_box()
 
-    def __preprocess_image(self):
+    def get_rotation(self):
+        return self.__rotation
+
+    def set_rotation(self, rotation: Rotation):
+        self.__rotation = rotation
+
+    def set_roll(self, roll):
+        self.__pose.set_roll(roll)
+
+    def __preprocess_image(self, is_model=False):
         # make a gaussian blur of the image to remove noise
         blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
-
-        # make all pixels in blur_image exponentially brighter
-        # blur_image = np.power(blur_image, 1.5).astype(np.uint8)
-
-        # hist = cv.calcHist([blur_image], [0], None, [256], [0, 256])
-        # # plot log hist
-        # plt.plot(hist)
-        # plt.show()
-        # dynamic_threshold = np.argmax(hist)  # below this is background
 
         # get x pixels evenly distributed from the image
         x = np.linspace(0, blur_image.shape[1] - 1, 20, dtype=int)
@@ -105,10 +108,9 @@ class Object:
         hist = cv.calcHist([pixel_values], [0], None, [256], [0, 256])
         # find the standard deviation of the histogram index
         std = np.std(pixel_values)  # - np.mean(pixel_values)
-        plt.plot(hist)
-        # plot std
-        # plt.plot([std + np.mean(pixel_values), std + np.mean(pixel_values)], [0, np.max(hist)], "r")
-        plt.show()
+        if self.__verbose:
+            plt.plot(hist)
+            plt.show()
 
         background_threshold = np.argmax(hist) + std * 2
 
@@ -118,100 +120,45 @@ class Object:
         x = x[above_background]
         y = y[above_background]
 
+        self.__satellite_points = np.array([x, y]).T
+
         # plot the coordinates
-        plt.plot(x, y, "r*")
-        plt.imshow(blur_image, cmap='gray')
-        plt.show()
+        if self.__verbose:
+            plt.plot(x, y, "r*")
+            plt.imshow(blur_image, cmap='gray')
+            plt.show()
 
-        # check different sobel ddepth
-        sobelx = cv.Sobel(blur_image, cv.CV_16S, 1, 0, ksize=3)
-        sobely = cv.Sobel(blur_image, cv.CV_16S, 0, 1, ksize=3)
-        laplacian = cv.Laplacian(blur_image, cv.CV_16S, ksize=3)
-        abs_grad_x = cv.convertScaleAbs(sobelx)
-        abs_grad_y = cv.convertScaleAbs(sobely)
+        if not is_model:
+            # check different sobel ddepth
+            sobelx = cv.Sobel(blur_image, cv.CV_16S, 1, 0, ksize=3)
+            sobely = cv.Sobel(blur_image, cv.CV_16S, 0, 1, ksize=3)
+            abs_grad_x = cv.convertScaleAbs(sobelx)
+            abs_grad_y = cv.convertScaleAbs(sobely)
 
-        grad = cv.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
-        plt.imshow(sobelx, cmap='gray')
-        plt.show()
-        plt.imshow(sobely, cmap='gray')
-        plt.show()
-        plt.imshow(laplacian, cmap='gray')
-        plt.show()
-        abs_grad_laplacian = cv.convertScaleAbs(laplacian)
-        plt.imshow(grad, cmap='gray')
-        plt.show()
+            grad = cv.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
+            # if self.__verbose:
+            #     plt.imshow(sobelx, cmap='gray')
+            #     plt.show()
+            #     plt.imshow(sobely, cmap='gray')
+            #     plt.show()
+            #     plt.imshow(grad, cmap='gray')
+            #     plt.show()
 
-        # find contours in the image grad
-        ret, self.__threshold_image = cv.threshold(grad, 2, 255, cv.THRESH_BINARY)
-        contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        # find the longest contour
-        contour = max(contours, key=cv.contourArea)
+            # find contours in the image grad
+            ret, self.__threshold_image = cv.threshold(grad, 2, 255, cv.THRESH_BINARY)
+        else:
+            ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
+
+        # contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        # # find the longest contour
+        # contour = max(contours, key=cv.contourArea)
+        # self.__contour = contour
         # plot the contour
-        plt.imshow(grad, cmap='gray')
-        plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
-        plt.show()
+        # if self.__verbose:
+        #     plt.imshow(grad, cmap='gray')
+        #     plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
+        #     plt.show()
 
-        # make a sqaure around top left, top right, bottom left and bottom right
-        top_left = (x.min(), y.min())
-        bottom_right = (x.max(), y.max())
-
-        # make a recursive thresholding of the image
-        # acc_img = np.zeros((blur_image.shape[0], blur_image.shape[1]))
-        # thresh_img = recursive_threshold(blur_image, top_left, bottom_right, background_threshold, acc_img)
-        #
-        # plt.imshow(thresh_img, cmap='gray')
-        # plt.show()
-
-        # inside each square we make otsu thresholding
-        # we do the same for up, down, left and right
-        # if less than 50% is above the threshold, we the square split into 4 squares
-
-        # max_diff_index = None
-        # for point in zip(x, y):
-        #     # find the circle around the point
-        #     circle_x = [0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1]
-        #     circle_y = [3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1, 0, 1, 2, 3]
-        #     # get the pixel values of the circle
-        #     circle_values = blur_image[point[1] + circle_y, point[0] + circle_x]
-        #     # get value of point
-        #     point_value = blur_image[point[1], point[0]]
-        #     # find the difference between the point value and the circle values
-        #     diff = circle_values - point_value
-        #     # find the index where difference is the highest
-        #     max_diff_index = np.argmax(diff)
-        #
-        # # plot max_diff_index on the image
-        # plt.imshow(blur_image, cmap='gray')
-        # plt.plot(x[max_diff_index], y[max_diff_index], "r*")
-        # plt.show()
-
-        # select a random pixel from the above background pixels
-        # random_index = np.random.randint(0, len(x))
-        # Select a circle around the pixel
-
-        # new_img = np.zeros((blur_image.shape[0], blur_image.shape[1]))
-        # for i in range(1, 15, 5):
-        #     new_img += self.__get_threshold_image_split(i, blur_image)
-        #
-        # ret, new_img = cv.threshold(new_img, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
-        # plt.imshow(new_img, cmap='gray')
-        # plt.show()
-
-        # make a threshold of the blurred image to get a binary image
-        # ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
-        # ret, self.__threshold_image = cv.threshold(new_img, 21, 255, cv.THRESH_BINARY)
-        # ret_otsu, _ = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-        # canny edge detection
-        # median_pix = np.median(self.__threshold_image)
-        # lower = int(max(0, 0.6 * median_pix))
-        # upper = int(min(255, 1.3 * median_pix))
-        # canny = cv.Canny(image=self.__threshold_image, threshold1=ret_otsu * 0.5, threshold2=ret_otsu)
-        # canny = cv.Canny(blur_image, 0, 255)
-        # plt.imshow(canny, cmap='gray')
-        # plt.show()
-        # plot self.__threshold_image
-        # plt.imshow(self.__threshold_image, cmap='gray')
-        # plt.show()
         # coordinates = self.__moments.coordinates()
         # self.__threshold_image = rotate_image_around_center_of_mass(self.__threshold_image,
         #                                                             coordinates.orientation_degrees,
@@ -250,13 +197,85 @@ class Object:
         return new_img
 
     def __detect_contours(self, simplify_contours):
-        contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-        # find the longest contour
+        # remove the contours that are too small
+        contours = [contour for contour in contours if cv.contourArea(contour) > 50]
+
+        # TODO remove contours that are not containing points from all the satellite points
+        contours = [contour for contour in contours if
+                    np.any(np.isin(self.__satellite_points, contour.squeeze(), True).all(axis=1))]
+
+        # plot contours
+        if self.__verbose:
+            plt.imshow(self.__threshold_image, cmap='gray')
+            # plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+            for contour in contours:
+                plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
+            plt.show()
+
         self.__contour = max(contours, key=cv.contourArea)
+
+        # if self.__verbose:
+        #     plt.imshow(self.__threshold_image, cmap='gray')
+        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+        #     plt.show()
+
+        # cont = np.vstack([contours[i] for i in range(len(contours))])
+        # hull = cv.convexHull(cont)
+        #
+        # self.__contour = hull
 
         if simplify_contours:
             self.__simplify_contours()
+
+            if self.__verbose:
+                plt.imshow(self.__threshold_image, cmap='gray')
+            plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+            plt.show()
+
+        # find the n longest lines in self.__contour
+        # n = 10
+        # lines = []
+        # for i in range(len(self.__contour)):
+        #     lines.append(cv.norm(self.__contour[i] - self.__contour[i - 1]))
+        # longest_lines = np.argsort(lines)[-n:]
+        # # get the coordinates of the longest lines
+        # longest_lines_coordinates = self.__contour.squeeze()[longest_lines]
+        # # plot the longest lines on the contour
+        # if self.__verbose:
+        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+        #     plt.plot(longest_lines_coordinates[:, 0], longest_lines_coordinates[:, 1], "b")
+        #     plt.show()
+
+        # shift self.__contour by 1
+        contour_local = self.__contour
+        shifted_contour = np.roll(self.__contour, -1, axis=0)
+        diff = self.__contour - shifted_contour
+        lines = np.concatenate([contour_local, shifted_contour], axis=1)
+        lengths = np.sqrt(np.sum(diff ** 2, axis=2))
+        # find n longest lines
+        n = 3
+        longest_line_index = np.argsort(lengths.squeeze())[-n:]
+        longest_line_index = sorted(longest_line_index)
+        lines = lines[longest_line_index]
+
+        # add 1 to longest_line_index to get the next point remember to wrap around
+        longest_line_index_all = np.array(longest_line_index) + 1
+        longest_line_index_all = np.mod(longest_line_index_all, len(self.__contour))
+
+        # select longest_line_index from self.__contour
+        newLines = self.__contour.squeeze()[longest_line_index_all]
+        # reshape newLines to  self.__contour.shape
+
+        if self.__verbose:
+            plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+            # plot the lines (coordinates) on the contour
+            for line in lines:
+                plt.plot(line[:, 0], line[:, 1], "b")
+            plt.show()
+
+        # self.__contour = newLines.reshape((newLines.shape[0], 1, newLines.shape[1]))
 
         # find bounding box coordinates and crop the image
         img_x, img_y, img_width, img_height = cv.boundingRect(self.__contour)
@@ -327,6 +346,9 @@ class Object:
 
     def __str__(self) -> str:
         return f"Coordinates: {self.__moments.get_coordinates()}"
+
+    def set_pose(self, pose):
+        self.__pose = pose
 
 
 def rotate_image_around_center_of_mass(image: cv.UMat, angle_in_degrees, center_x, center_y):

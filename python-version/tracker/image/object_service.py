@@ -2,18 +2,22 @@ import cv2 as cv
 
 from image.image_service import ImageService
 from models.object import Object
+from service.service_interface import IService
 
 
 # Image to Object
-class ObjectService:
+class ObjectService(IService):
     __tracking_object: Object = None
     __image_service: ImageService = None
+    verbose = False
 
-    def __init__(self, image_service):
+    def __init__(self, config, image_service):
+        super().__init__(config)
         self.__image_service = image_service
 
-    def get_object(self) -> Object:
-        self.__tracking_object = Object(self.__image_service.get_image(), True)
+    def get_object(self, is_model=False) -> Object:
+        self.__tracking_object = Object(self.__image_service.get_image(), False, verbose=self.verbose,
+                                        is_model=is_model)
         return self.__tracking_object
 
     def set_object(self, tracked_object):

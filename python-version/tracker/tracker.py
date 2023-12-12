@@ -33,25 +33,25 @@ class Tracker(IService):
         tracked_object = self.__object_service.get_object()
 
         # self.contour_service.simplify_contours()
-        rotation, model = self.__contour_service.get_best_match()
+        self.__contour_service.get_best_match()
 
-        model_contour_length = len(model)
-
-        x = 0
-        y = 0
-        x_values = []
-        y_values = []
-
-        for l in model:
-            x = x + l[0][0]
-            y = y + l[0][1]
-            x_values.append(l[0][0])
-            y_values.append(l[0][1])
-
-        x /= model_contour_length
-        y /= model_contour_length
-
-        print(x, y)
+        # model_contour_length = len(model)
+        #
+        # x = 0
+        # y = 0
+        # x_values = []
+        # y_values = []
+        #
+        # for l in model:
+        #     x = x + l[0][0]
+        #     y = y + l[0][1]
+        #     x_values.append(l[0][0])
+        #     y_values.append(l[0][1])
+        #
+        # x /= model_contour_length
+        # y /= model_contour_length
+        #
+        # print(x, y)
 
         # find the length from x,y to all points in the contour
 
