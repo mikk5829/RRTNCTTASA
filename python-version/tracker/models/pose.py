@@ -15,7 +15,7 @@ class Rotation:
             self.yaw = float(yaw)
 
     def __str__(self):
-        # 2 decimal places and roll, pitch and yaw can be None
+        # 2 decimal places and roll, pitch and yaw can be None and should not be printed
         if self.roll is None:
             self.roll = 0
         if self.pitch is None:
@@ -23,7 +23,7 @@ class Rotation:
         if self.yaw is None:
             self.yaw = 0
 
-        return f"roll: {self.roll:.2f}, pitch: {self.pitch:.2f}, yaw: {self.yaw:.2f}"
+        return f"roll: {self.roll:.2f}, pitch/theta/X: {self.pitch:.2f}, yaw/phi/Y: {self.yaw:.2f}"
 
     # define sort order to sort ascending by pitch and then yaw can be None
     def __lt__(self, other):

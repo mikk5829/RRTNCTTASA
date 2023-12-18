@@ -4,8 +4,16 @@ import struct
 import matplotlib.pyplot as plt
 import glob
 
-
 def read_header(fid):
+    """
+    Reads the header information from the given file object.
+
+    Parameters:
+    fid (file object): The file object to read from.
+
+    Returns:
+    dict: A dictionary containing the header information.
+    """
     header = {}
 
     temp = struct.unpack('HH', fid.read(4))
@@ -42,7 +50,17 @@ def read_header(fid):
     return header
 
 
-def unc_to_tif(unc_file_path, tif_file_path):
+def unc_to_png(unc_file_path, tif_file_path):
+    """
+    Convert an UNC file to a PNG image.
+
+    Args:
+        unc_file_path (str): The path to the UNC file.
+        tif_file_path (str): The path to save the PNG image.
+
+    Returns:
+        None
+    """
     with open(unc_file_path, 'rb') as f:
         # Skip the header
         header = read_header(f)
@@ -61,8 +79,7 @@ def unc_to_tif(unc_file_path, tif_file_path):
 
 # Get all .unc files in the directory
 files = glob.glob(
-    '/Users/mikkel/Library/CloudStorage/OneDrive-SharedLibraries-DanmarksTekniskeUniversitet/Master Thesis - '
-    'General/Download/**/*.unc',
+    'test_images/theta15deg_8steps_45degs/**/*.unc',
     recursive=True)
-# for each file, run unc_to_tif
-np.vectorize(unc_to_tif)(files, [f.replace('.unc', '.png') for f in files])
+# for each file, run unc_to_png
+np.vectorize(unc_to_png)(files, [f.replace('.unc', '.png') for f in files])

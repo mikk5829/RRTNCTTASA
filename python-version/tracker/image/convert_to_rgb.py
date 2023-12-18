@@ -30,6 +30,8 @@ for file in tqdm(get_files_from_directory("../blender_images")):
     cv.imwrite("/Users/mikkel/repos/RRTNCTTASA/blender_images/rgb/rg_" + file, cv.add(red_channel, green_channel))
     cv.imwrite("/Users/mikkel/repos/RRTNCTTASA/blender_images/rgb/rb_" + file, cv.add(red_channel, blue_channel))
     cv.imwrite("/Users/mikkel/repos/RRTNCTTASA/blender_images/rgb/gb_" + file, cv.add(green_channel, blue_channel))
+    cv.imwrite("/Users/mikkel/repos/RRTNCTTASA/blender_images/rgb/rgb_" + file,
+               cv.add(cv.add(red_channel, green_channel), blue_channel))
 
     # save channels
     # cv.imwrite("/Users/mikkel/repos/RRTNCTTASA/blender_images/rgb/r_" + file, red_channel)

@@ -75,6 +75,8 @@ class Object:
     __contour: cv.UMat = None
     __verbose = False
     __satellite_points = None
+    # the index of the furthest point in the pose map
+    __furthest_index = None
 
     def __init__(self, raw_image, simplify_contours=False, verbose=False, is_model=False):
         self.__verbose = verbose
@@ -82,6 +84,12 @@ class Object:
         self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
         self.__set_bounding_box()
+
+    def set_furthest_index(self, index):
+        self.__furthest_index = index
+
+    def get_furthest_index(self):
+        return self.__furthest_index
 
     def get_rotation(self):
         return self.__rotation
@@ -97,8 +105,8 @@ class Object:
         blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
 
         # get x pixels evenly distributed from the image
-        x = np.linspace(0, blur_image.shape[1] - 1, 20, dtype=int)
-        y = np.linspace(0, blur_image.shape[0] - 1, 20, dtype=int)
+        x = np.linspace(0, blur_image.shape[1] - 1, 50, dtype=int)
+        y = np.linspace(0, blur_image.shape[0] - 1, 50, dtype=int)
         x, y = np.meshgrid(x, y)
         x = x.flatten()
         y = y.flatten()
@@ -202,7 +210,7 @@ class Object:
         # remove the contours that are too small
         contours = [contour for contour in contours if cv.contourArea(contour) > 50]
 
-        # TODO remove contours that are not containing points from all the satellite points
+        # remove the contours that do not contain any satellite points
         contours = [contour for contour in contours if
                     np.any(np.isin(self.__satellite_points, contour.squeeze(), True).all(axis=1))]
 

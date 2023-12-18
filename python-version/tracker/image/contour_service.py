@@ -1,3 +1,5 @@
+from queue import PriorityQueue
+
 import cv2 as cv
 import numpy as np
 import pandas as pd
@@ -10,6 +12,11 @@ from image.pose_map_service import PoseMapService
 from models.object import Object
 from models.pose import Pose, Rotation, Translation
 from service.service_interface import IService
+
+
+def plot_contour(contour, color="b"):
+    plt.plot(np.append(contour[:, 0, 0], contour[0, 0, 0]),
+             np.append(contour[:, 0, 1], contour[0, 0, 1]), color)
 
 
 def custom_uniform_interpolation(angle, dist):
@@ -91,14 +98,17 @@ def XYZ(width, height, CoM, fs):
     return Translation([px, py, z])
 
 
-def calculate_roll(found_object: Object, tracked_object: Object):
+def calculate_roll(found_object: Object, tracked_object: Object, inverse_object: Object):
     curves = []
-    for local_object in [found_object, tracked_object]:
+    for local_object in [found_object, tracked_object, inverse_object]:
         object_contour = local_object.get_contour()
         object_x = local_object.get_moments().get_coordinates().x
         object_y = local_object.get_moments().get_coordinates().y
         # Calculate the distance between every point and the CoM
         object_dist = np.sqrt((object_contour[:, :, 0] - object_x) ** 2 + (object_contour[:, :, 1] - object_y) ** 2)
+        # manhattan distance
+        # object_dist = np.float64(np.abs(object_contour[:, :, 0] - object_x) + np.abs(object_contour[:, :,
+        #                                                                              1] - object_y))
         # normalize the distances
         object_dist -= np.min(object_dist)
         object_dist /= np.max(object_dist)
@@ -119,20 +129,41 @@ def calculate_roll(found_object: Object, tracked_object: Object):
     # unpack the curves
     parametric_curve = curves[0]
     parametric_curve2 = curves[1]
+    parametric_curve3 = curves[2]
+
+    plt.plot(parametric_curve, "b")
+    plt.plot(np.flip(parametric_curve), "r")
+
+    plt.show()
 
     mult_sum = np.zeros(parametric_curve.shape[0])
+    mult_sum_reverse = np.zeros(parametric_curve.shape[0])
     for i in range(len(mult_sum)):
         mult_sum[i] = np.dot(parametric_curve, np.roll(parametric_curve2, -i))
+        # mult_sum_reverse[i] = np.dot(parametric_curve3, np.roll(parametric_curve2, -i))
+        mult_sum_reverse[i] = np.dot(np.flip(parametric_curve), np.roll(parametric_curve2, -i))
 
+    plt.plot(mult_sum, "b")
+    plt.plot(mult_sum_reverse, "r")
+    plt.show()
+
+    plt.show()
     # Find the index of the maximum value.
     roll = np.argmax(mult_sum)
     max_val = np.max(mult_sum)
+
+    roll_reverse = np.argmax(mult_sum_reverse)
+    max_val_reverse = np.max(mult_sum_reverse)
+
+    rotation_inverse = inverse_object.get_rotation()
+
+    rotation_inverse.set_roll(roll_reverse)
 
     rotation = found_object.get_rotation()
 
     rotation.set_roll(roll)
 
-    return rotation, max_val
+    return rotation, max_val, rotation_inverse, max_val_reverse
 
 
 class ContourService(IService):
@@ -152,46 +183,93 @@ class ContourService(IService):
     def get_best_match(self):
         tracked_object = self.__object_service.get_object()
         tracked_object_contour = tracked_object.get_contour()
-        tracked_object_com = tracked_object.get_moments().get_coordinates().x, tracked_object.get_moments().get_coordinates().y
-        # find de n bedste matches med contour
-        # ud af dem, så lav krydskorrelation og find den bedste
-        # returner det pose
 
         # match the contours to the model
         pose_map = self.__pose_map_service.get_pose_map()
-        best_score = 1  # initialize with the worst score
-        found_pose: Pose
-        # list of objects
-        found_objects: list[Object] = []
 
-        for pose, tracking_object in pose_map.items():
+        found_pose: Pose
+        # list of objects as Priority Queue
+        found_objects_pq = PriorityQueue()
+        found_objects: list[Object] = []
+        scores = []
+
+        # plot index 20 and index -20
+
+        for tracking_object in pose_map.values():
             local_score = cv.matchShapes(tracked_object_contour, tracking_object.get_contour(), 1, 0.0)
 
-            if local_score < 0.05:
-                found_objects.append(tracking_object)
+            found_objects_pq.put((local_score, tracking_object))
+            # found_objects.append(tracking_object)
+            scores.append(local_score)
 
         found_rotation_list = []
-        for found_object in found_objects:
-            # plot the found_object, tracked_object
-            plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
-            plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
-            plt.title(f"Contour matching", wrap=True)
-            plt.suptitle(found_object.get_rotation(), wrap=True)
-            plt.xlabel("x")
-            plt.ylabel("y")
-            plt.plot(tracked_object.coordinates.x, tracked_object.coordinates.y, "r*")
-            plt.plot(found_object.coordinates.x, found_object.coordinates.y, "b*")
-            plt.legend(["Image", "3D Model", "Image COM", "3D Model COM"])
-            plt.show()
-            found_rotation_list.append(calculate_roll(found_object, tracked_object))
+        found_scores = []
+        while not found_objects_pq.empty():
+            score, found_object = found_objects_pq.get()
+            # exit when score is above 0.05
+            if score > 0.1:
+                break
+            inverse_object = pose_map[found_object.get_furthest_index()]
+            roll = calculate_roll(found_object, tracked_object, inverse_object)
+            found_rotation_list.append(roll)
+            found_scores.append(score)
+            if self.verbose:
+                plot_contour(tracked_object.get_contour(), "r")
+                plot_contour(found_object.get_contour(), "b")
+                plot_contour(inverse_object.get_contour(), "g")
 
-        found_rotation_list = dict(found_rotation_list)
+                # plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
+                # plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
+                # plt.plot(inverse_object.get_contour()[:, 0, 0], inverse_object.get_contour()[:, 0, 1], "g")
+                plt.title(f"Contour matching", wrap=True)
+                plt.suptitle(roll[0], wrap=True)
+                plt.xlabel("x")
+                plt.ylabel("y")
+                # flip y axis to make it look like the image
+                plt.gca().invert_yaxis()
+                plt.plot(tracked_object.coordinates.x, tracked_object.coordinates.y, "r*")
+                plt.plot(found_object.coordinates.x, found_object.coordinates.y, "b*")
+                plt.legend(["Image", "3D Model", "Inverse 3D Model", "Image COM", "3D Model COM"])
+                plt.show()
 
-        # find the key with the highest value
-        found_rotation = max(found_rotation_list, key=found_rotation_list.get)
+        # for found_object in found_objects:
+        #     roll = calculate_roll(found_object, tracked_object)
+        #     found_rotation_list.append(roll)
+        #     # plot the found_object, tracked_object
+        #     if self.verbose:
+        #         plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
+        #         plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
+        #         plt.title(f"Contour matching", wrap=True)
+        #         plt.suptitle(roll[0], wrap=True)
+        #         plt.xlabel("x")
+        #         plt.ylabel("y")
+        #         # flip y axis to make it look like the image
+        #         plt.gca().invert_yaxis()
+        #         plt.plot(tracked_object.coordinates.x, tracked_object.coordinates.y, "r*")
+        #         plt.plot(found_object.coordinates.x, found_object.coordinates.y, "b*")
+        #         plt.legend(["Image", "3D Model", "Image COM", "3D Model COM"])
+        #         plt.show()
 
-        tracked_object.set_rotation(found_rotation)
+        # make the dataframe from tuple list found_rotation_list and scores
+        # unpack found_rotation_list
 
-        print(tracked_object.get_rotation())
+        df = pd.DataFrame.from_records(found_rotation_list,
+                                       columns=['roll', 'max_val', 'roll_reverse', 'max_val_reverse'])
+        df['score'] = found_scores
+        # if max_val_reverse > max_val then remove the row
+        # df['matching_score'] = scores
+        df['reversed_diff'] = df['max_val_reverse'] - df['max_val']
+        df['reversed_best'] = df['max_val_reverse'] > df['max_val']
 
+        # df = pd.DataFrame.from_dict(found_rotation_list, orient='index')
+
+        # for i, found_object in enumerate(found_rotation_list):
+        #     print(found_object, found_rotation_list[found_object], scores[i])
+
+        print("Best match:")
+        print(df[df['reversed_best'] == False].sort_values(by=['score']).head(1)['roll'].values[0])
+        # if df.head(1)['reversed_best'].bool():
+        #     print(df[df['reversed_best'] == True].sort_values(by=['score']).head(1))
+        # else:
+        #     print(df[df['reversed_best'] == False].sort_values(by=['score']).head(1))
         return 0
