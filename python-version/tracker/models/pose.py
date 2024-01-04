@@ -35,6 +35,10 @@ class Rotation:
     def set_roll(self, roll: float):
         self.roll = roll
 
+    def add_roll(self, roll: float):
+        self.roll += roll
+        self.roll %= 360
+
     def set_pitch(self, pitch: float):
         self.pitch = pitch
 

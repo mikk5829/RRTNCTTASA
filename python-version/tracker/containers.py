@@ -26,4 +26,4 @@ class Container(containers.DeclarativeContainer):
                                           pose_map_service=pose_map_service)
 
     tracker = providers.Singleton(Tracker, config=config, object_service=object_service,
-                                  contour_service=contour_service)
+                                  contour_service=contour_service, image_service=image_service)

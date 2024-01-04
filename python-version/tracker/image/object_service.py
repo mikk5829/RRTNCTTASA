@@ -16,9 +16,9 @@ class ObjectService(IService):
         self.__image_service = image_service
 
     def get_object(self, is_model=False) -> Object:
-        if self.__tracking_object is None or is_model:
-            self.__tracking_object = Object(self.__image_service.get_image(), False, verbose=self.verbose,
-                                            is_model=is_model)
+        # if self.__tracking_object is None or is_model:
+        self.__tracking_object = Object(self.__image_service.get_image(), False, verbose=self.verbose,
+                                        is_model=is_model, file_name=self.__image_service.image_path)
         return self.__tracking_object
 
     def set_object(self, tracked_object):

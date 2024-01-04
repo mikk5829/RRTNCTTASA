@@ -4,6 +4,7 @@ import struct
 import matplotlib.pyplot as plt
 import glob
 
+
 def read_header(fid):
     """
     Reads the header information from the given file object.
@@ -79,7 +80,8 @@ def unc_to_png(unc_file_path, tif_file_path):
 
 # Get all .unc files in the directory
 files = glob.glob(
-    'test_images/theta15deg_8steps_45degs/**/*.unc',
+    '/Users/mikkel/Library/CloudStorage/OneDrive-SharedLibraries-DanmarksTekniskeUniversitet/Master Thesis - '
+    'General/Download/dynamic_25deg_0to360_5degstep/**/*.unc',
     recursive=True)
 # for each file, run unc_to_png
 np.vectorize(unc_to_png)(files, [f.replace('.unc', '.png') for f in files])

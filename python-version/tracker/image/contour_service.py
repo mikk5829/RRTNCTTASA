@@ -1,3 +1,4 @@
+import os
 from queue import PriorityQueue
 
 import cv2 as cv
@@ -98,9 +99,9 @@ def XYZ(width, height, CoM, fs):
     return Translation([px, py, z])
 
 
-def calculate_roll(found_object: Object, tracked_object: Object, inverse_object: Object):
+def calculate_roll(found_object: Object, tracked_object: Object):
     curves = []
-    for local_object in [found_object, tracked_object, inverse_object]:
+    for local_object in [found_object, tracked_object]:
         object_contour = local_object.get_contour()
         object_x = local_object.get_moments().get_coordinates().x
         object_y = local_object.get_moments().get_coordinates().y
@@ -129,12 +130,12 @@ def calculate_roll(found_object: Object, tracked_object: Object, inverse_object:
     # unpack the curves
     parametric_curve = curves[0]
     parametric_curve2 = curves[1]
-    parametric_curve3 = curves[2]
+    # parametric_curve3 = curves[2]
 
-    plt.plot(parametric_curve, "b")
-    plt.plot(np.flip(parametric_curve), "r")
-
-    plt.show()
+    # plt.plot(parametric_curve, "b")
+    # plt.plot(np.flip(parametric_curve), "r")
+    #
+    # plt.show()
 
     mult_sum = np.zeros(parametric_curve.shape[0])
     mult_sum_reverse = np.zeros(parametric_curve.shape[0])
@@ -143,11 +144,10 @@ def calculate_roll(found_object: Object, tracked_object: Object, inverse_object:
         # mult_sum_reverse[i] = np.dot(parametric_curve3, np.roll(parametric_curve2, -i))
         mult_sum_reverse[i] = np.dot(np.flip(parametric_curve), np.roll(parametric_curve2, -i))
 
-    plt.plot(mult_sum, "b")
-    plt.plot(mult_sum_reverse, "r")
-    plt.show()
+    # plt.plot(mult_sum, "b")
+    # plt.plot(mult_sum_reverse, "r")
+    # plt.show()
 
-    plt.show()
     # Find the index of the maximum value.
     roll = np.argmax(mult_sum)
     max_val = np.max(mult_sum)
@@ -155,7 +155,7 @@ def calculate_roll(found_object: Object, tracked_object: Object, inverse_object:
     roll_reverse = np.argmax(mult_sum_reverse)
     max_val_reverse = np.max(mult_sum_reverse)
 
-    rotation_inverse = inverse_object.get_rotation()
+    rotation_inverse = found_object.get_rotation()
 
     rotation_inverse.set_roll(roll_reverse)
 
@@ -190,10 +190,7 @@ class ContourService(IService):
         found_pose: Pose
         # list of objects as Priority Queue
         found_objects_pq = PriorityQueue()
-        found_objects: list[Object] = []
         scores = []
-
-        # plot index 20 and index -20
 
         for tracking_object in pose_map.values():
             local_score = cv.matchShapes(tracked_object_contour, tracking_object.get_contour(), 1, 0.0)
@@ -209,14 +206,14 @@ class ContourService(IService):
             # exit when score is above 0.05
             if score > 0.1:
                 break
-            inverse_object = pose_map[found_object.get_furthest_index()]
-            roll = calculate_roll(found_object, tracked_object, inverse_object)
+            # inverse_object = pose_map[found_object.get_furthest_index()]
+            roll = calculate_roll(found_object, tracked_object)
             found_rotation_list.append(roll)
             found_scores.append(score)
             if self.verbose:
                 plot_contour(tracked_object.get_contour(), "r")
                 plot_contour(found_object.get_contour(), "b")
-                plot_contour(inverse_object.get_contour(), "g")
+                # plot_contour(inverse_object.get_contour(), "g")
 
                 # plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
                 # plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
@@ -254,20 +251,38 @@ class ContourService(IService):
         # unpack found_rotation_list
 
         df = pd.DataFrame.from_records(found_rotation_list,
-                                       columns=['roll', 'max_val', 'roll_reverse', 'max_val_reverse'])
+                                       columns=['rotation', 'max_val', 'rotation_reverse', 'max_val_reverse'])
         df['score'] = found_scores
         # if max_val_reverse > max_val then remove the row
         # df['matching_score'] = scores
         df['reversed_diff'] = df['max_val_reverse'] - df['max_val']
         df['reversed_best'] = df['max_val_reverse'] > df['max_val']
 
+        df['file_name'] = tracked_object.file_name
+
+        df['roll'] = df['rotation'].apply(lambda x: x.roll)
+        df['pitch'] = df['rotation'].apply(lambda x: x.pitch)
+        df['yaw'] = df['rotation'].apply(lambda x: x.yaw)
+
+        df['roll_reverse'] = df['rotation_reverse'].apply(lambda x: x.roll)
+        df['pitch_reverse'] = df['rotation_reverse'].apply(lambda x: x.pitch)
+        df['yaw_reverse'] = df['rotation_reverse'].apply(lambda x: x.yaw)
+
         # df = pd.DataFrame.from_dict(found_rotation_list, orient='index')
 
         # for i, found_object in enumerate(found_rotation_list):
         #     print(found_object, found_rotation_list[found_object], scores[i])
 
-        print("Best match:")
-        print(df[df['reversed_best'] == False].sort_values(by=['score']).head(1)['roll'].values[0])
+        # print("Best match:")
+        # print(df[df['reversed_best'] == False].sort_values(by=['score']).head(1)['rotation'].values[0])
+
+        # append the df to a csv file
+        # add header if file does not exist
+        if not os.path.isfile("matching_scores_odl.csv"):
+            df.to_csv("matching_scores_odl.csv")
+        else:  # else it exists so append without writing the header
+            df.to_csv("matching_scores_odl.csv", mode='a', header=False)
+
         # if df.head(1)['reversed_best'].bool():
         #     print(df[df['reversed_best'] == True].sort_values(by=['score']).head(1))
         # else:

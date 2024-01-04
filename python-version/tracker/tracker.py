@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
-from image.image_service import resize_with_aspect_ratio
+from image.image_service import ImageService, resize_with_aspect_ratio
 import cv2 as cv
 
 from models.object import Object
@@ -15,11 +16,27 @@ class Tracker(IService):
     image_path: str = None  # Path to the image
     __object_service = None  # Service to get objects
     __contour_service = None  # Service to get contours
+    __image_service: ImageService = None
 
-    def __init__(self, config, object_service, contour_service):
+    def __init__(self, config, object_service, contour_service, image_service):
         super().__init__(config)
         self.__object_service = object_service
         self.__contour_service = contour_service
+        self.__image_service = image_service
+
+    def estimate_poses(self):
+        image_generator = self.__image_service.get_raw_images_from_directory_generator()
+        while image_generator:
+            try:
+                # create a new pose map from the images in the folder
+                key, image = next(image_generator)
+                self.__contour_service.get_best_match()
+            except StopIteration:
+                break
+            except ValueError as e:
+                print(e)
+                print(f"Skipping image {key}")
+                continue
 
     def estimate_pose(self):
         """

@@ -31,7 +31,7 @@ class ImageService(IService):
 
     def get_raw_images_from_directory_generator(self):
         images_paths = get_files_from_directory(self.path_to_model_images)
-        for path in tqdm(images_paths, desc="Creating pose map", unit="image", colour="green"):
+        for path in tqdm(images_paths, desc="Scanning images", unit="image", colour="green"):
             try:
                 self.image_path = (self.path_to_model_images + "/" + path)
                 image = self.get_image()

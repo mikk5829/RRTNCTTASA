@@ -77,13 +77,15 @@ class Object:
     __satellite_points = None
     # the index of the furthest point in the pose map
     __furthest_index = None
+    file_name = None
 
-    def __init__(self, raw_image, simplify_contours=False, verbose=False, is_model=False):
+    def __init__(self, raw_image, simplify_contours=False, verbose=False, is_model=False, file_name=None):
         self.__verbose = verbose
         self.__raw_image = raw_image
         self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
         self.__set_bounding_box()
+        self.file_name = file_name
 
     def set_furthest_index(self, index):
         self.__furthest_index = index

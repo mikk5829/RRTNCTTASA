@@ -1,3 +1,4 @@
+import math
 import os
 import pickle
 import cv2 as cv
@@ -69,7 +70,19 @@ class PoseMapService(IService):
                 furthest_index = furthest_index.split(".png")[0]
                 furthest_index = int(float(furthest_index))
                 index = int(float(index))
-                rotation = Rotation(None, float(theta), float(phi))
+                theta = float(theta)
+                phi = float(phi)
+                # calculate the cartesian coordinates of the object
+                # x = math.sin(theta) * math.cos(phi)
+                # y = math.sin(theta) * math.sin(phi)
+                # z = math.cos(theta)
+                # # our coordinate system is rotated, so we need to rotate it back
+                # x, y, z = x, -z, y
+                # # find the roll of the object
+                # roll = math.atan2(y, x)
+                # roll = math.degrees(roll)
+
+                rotation = Rotation(None, theta, phi)
                 tracked_object.set_rotation(rotation)
                 tracked_object.set_furthest_index(str(furthest_index) + channel)
                 pose_map[str(index) + channel] = tracked_object  # .get_contour()

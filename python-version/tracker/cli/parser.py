@@ -23,6 +23,7 @@ class Parser:
     # adding required arguments
     parser.add_argument("model_name", help="The name for the model you want to use, if no image path is provided, "
                                            "then the output will be the last Pose recorded")
+    parser.add_argument("-t", "--track", help="Track the object in the image given a folder", action="store_true")
 
     args, unknown = parser.parse_known_args()
 
