@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-from models.pose import Rotation
+from models.pose import cv
 
 # Read Image
 

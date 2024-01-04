@@ -82,7 +82,7 @@ class PoseMapService(IService):
                 # roll = math.atan2(y, x)
                 # roll = math.degrees(roll)
 
-                rotation = Rotation(None, theta, phi)
+                rotation = Rotation(None, theta, phi, channel)
                 tracked_object.set_rotation(rotation)
                 tracked_object.set_furthest_index(str(furthest_index) + channel)
                 pose_map[str(index) + channel] = tracked_object  # .get_contour()

@@ -5,14 +5,17 @@ class Rotation:
     roll: float = None  # Rotation around the x-axis
     pitch: float = None  # Rotation around the y-axis
     yaw: float = None  # Rotation around the z-axis
+    channel: str = None  # Channel of the object
 
-    def __init__(self, roll: float = None, pitch: float = None, yaw: float = None):
+    def __init__(self, roll: float = None, pitch: float = None, yaw: float = None, channel: str = None):
         if roll is not None:
             self.roll = float(roll)
         if pitch is not None:
             self.pitch = float(pitch)
         if yaw is not None:
             self.yaw = float(yaw)
+        if channel is not None:
+            self.channel = channel
 
     def __str__(self):
         # 2 decimal places and roll, pitch and yaw can be None and should not be printed

@@ -182,30 +182,6 @@ class Object:
         approx = cv.approxPolyDP(self.__contour, epsilon, True)
         self.__contour = approx
 
-    def __get_threshold_image_split(self, n, blur_image):
-        assert n > 0
-        # todo start at region of interest
-        # find dynamically the threshold value using a histogram and the 1st peak
-        hist = cv.calcHist([blur_image], [0], None, [256], [0, 256])
-        dynamic_threshold = np.argmax(hist)
-
-        width = int(blur_image.shape[1] / n)
-        height = int(blur_image.shape[0] / n)
-        new_img = np.zeros((blur_image.shape[0], blur_image.shape[1]))
-        for i in range(n):
-            for j in range(n):
-                x = (1 + i) * width
-                y = (1 + j) * height
-                cropped_img = blur_image[y:y + height, x:x + width]
-                ret, thresh_img = cv.threshold(cropped_img, 0, 255, cv.THRESH_BINARY +
-                                               cv.THRESH_TRIANGLE)
-                if ret > dynamic_threshold:
-                    cropped_img = thresh_img
-
-                new_img[y:y + height, x:x + width] = cropped_img
-
-        return new_img
-
     def __detect_contours(self, simplify_contours):
         contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
@@ -226,16 +202,6 @@ class Object:
 
         self.__contour = max(contours, key=cv.contourArea)
 
-        # if self.__verbose:
-        #     plt.imshow(self.__threshold_image, cmap='gray')
-        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
-        #     plt.show()
-
-        # cont = np.vstack([contours[i] for i in range(len(contours))])
-        # hull = cv.convexHull(cont)
-        #
-        # self.__contour = hull
-
         if simplify_contours:
             self.__simplify_contours()
 
@@ -244,46 +210,31 @@ class Object:
             plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
             plt.show()
 
-        # find the n longest lines in self.__contour
-        # n = 10
-        # lines = []
-        # for i in range(len(self.__contour)):
-        #     lines.append(cv.norm(self.__contour[i] - self.__contour[i - 1]))
-        # longest_lines = np.argsort(lines)[-n:]
-        # # get the coordinates of the longest lines
-        # longest_lines_coordinates = self.__contour.squeeze()[longest_lines]
-        # # plot the longest lines on the contour
-        # if self.__verbose:
-        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
-        #     plt.plot(longest_lines_coordinates[:, 0], longest_lines_coordinates[:, 1], "b")
-        #     plt.show()
-
-        # shift self.__contour by 1
-        contour_local = self.__contour
-        shifted_contour = np.roll(self.__contour, -1, axis=0)
-        diff = self.__contour - shifted_contour
-        lines = np.concatenate([contour_local, shifted_contour], axis=1)
-        lengths = np.sqrt(np.sum(diff ** 2, axis=2))
-        # find n longest lines
-        n = 3
-        longest_line_index = np.argsort(lengths.squeeze())[-n:]
-        longest_line_index = sorted(longest_line_index)
-        lines = lines[longest_line_index]
-
-        # add 1 to longest_line_index to get the next point remember to wrap around
-        longest_line_index_all = np.array(longest_line_index) + 1
-        longest_line_index_all = np.mod(longest_line_index_all, len(self.__contour))
-
-        # select longest_line_index from self.__contour
-        newLines = self.__contour.squeeze()[longest_line_index_all]
+        # contour_local = self.__contour
+        # shifted_contour = np.roll(self.__contour, -1, axis=0)
+        # diff = self.__contour - shifted_contour
+        # lines = np.concatenate([contour_local, shifted_contour], axis=1)
+        # lengths = np.sqrt(np.sum(diff ** 2, axis=2))
+        # # find n longest lines
+        # n = 3
+        # longest_line_index = np.argsort(lengths.squeeze())[-n:]
+        # longest_line_index = sorted(longest_line_index)
+        # lines = lines[longest_line_index]
+        #
+        # # add 1 to longest_line_index to get the next point remember to wrap around
+        # longest_line_index_all = np.array(longest_line_index) + 1
+        # longest_line_index_all = np.mod(longest_line_index_all, len(self.__contour))
+        #
+        # # select longest_line_index from self.__contour
+        # newLines = self.__contour.squeeze()[longest_line_index_all]
         # reshape newLines to  self.__contour.shape
 
-        if self.__verbose:
-            plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
-            # plot the lines (coordinates) on the contour
-            for line in lines:
-                plt.plot(line[:, 0], line[:, 1], "b")
-            plt.show()
+        # if self.__verbose:
+        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+        #     # plot the lines (coordinates) on the contour
+        #     for line in lines:
+        #         plt.plot(line[:, 0], line[:, 1], "b")
+        #     plt.show()
 
         # self.__contour = newLines.reshape((newLines.shape[0], 1, newLines.shape[1]))
 

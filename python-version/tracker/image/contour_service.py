@@ -157,6 +157,8 @@ def calculate_roll(found_object: Object, tracked_object: Object):
 
     rotation_inverse = found_object.get_rotation()
 
+    found_object.get_rotation()
+
     rotation_inverse.set_roll(roll_reverse)
 
     rotation = found_object.get_rotation()
@@ -187,7 +189,6 @@ class ContourService(IService):
         # match the contours to the model
         pose_map = self.__pose_map_service.get_pose_map()
 
-        found_pose: Pose
         # list of objects as Priority Queue
         found_objects_pq = PriorityQueue()
         scores = []
@@ -204,7 +205,7 @@ class ContourService(IService):
         while not found_objects_pq.empty():
             score, found_object = found_objects_pq.get()
             # exit when score is above 0.05
-            if score > 0.1:
+            if score > 0.06:
                 break
             # inverse_object = pose_map[found_object.get_furthest_index()]
             roll = calculate_roll(found_object, tracked_object)
@@ -260,10 +261,12 @@ class ContourService(IService):
 
         df['file_name'] = tracked_object.file_name
 
+        df['channel'] = df['rotation'].apply(lambda x: x.channel)
         df['roll'] = df['rotation'].apply(lambda x: x.roll)
         df['pitch'] = df['rotation'].apply(lambda x: x.pitch)
         df['yaw'] = df['rotation'].apply(lambda x: x.yaw)
 
+        df['channel_reverse'] = df['rotation_reverse'].apply(lambda x: x.channel)
         df['roll_reverse'] = df['rotation_reverse'].apply(lambda x: x.roll)
         df['pitch_reverse'] = df['rotation_reverse'].apply(lambda x: x.pitch)
         df['yaw_reverse'] = df['rotation_reverse'].apply(lambda x: x.yaw)
@@ -278,10 +281,10 @@ class ContourService(IService):
 
         # append the df to a csv file
         # add header if file does not exist
-        if not os.path.isfile("matching_scores_odl.csv"):
-            df.to_csv("matching_scores_odl.csv")
+        if not os.path.isfile("matching_scores.csv"):
+            df.to_csv("matching_scores.csv")
         else:  # else it exists so append without writing the header
-            df.to_csv("matching_scores_odl.csv", mode='a', header=False)
+            df.to_csv("matching_scores.csv", mode='a', header=False)
 
         # if df.head(1)['reversed_best'].bool():
         #     print(df[df['reversed_best'] == True].sort_values(by=['score']).head(1))
