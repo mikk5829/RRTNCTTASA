@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 from models.moments import Coordinates, Moments, SimpleCoordinates
 import cv2 as cv
@@ -107,8 +108,9 @@ class Object:
         blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
 
         # get x pixels evenly distributed from the image
-        x = np.linspace(0, blur_image.shape[1] - 1, 50, dtype=int)
-        y = np.linspace(0, blur_image.shape[0] - 1, 50, dtype=int)
+        n = 50
+        x = np.linspace(0, blur_image.shape[1] - 1, n, dtype=int)
+        y = np.linspace(0, blur_image.shape[0] - 1, n, dtype=int)
         x, y = np.meshgrid(x, y)
         x = x.flatten()
         y = y.flatten()
@@ -118,11 +120,36 @@ class Object:
         hist = cv.calcHist([pixel_values], [0], None, [256], [0, 256])
         # find the standard deviation of the histogram index
         std = np.std(pixel_values)  # - np.mean(pixel_values)
-        if self.__verbose:
-            plt.plot(hist)
-            plt.show()
-
         background_threshold = np.argmax(hist) + std * 2
+        if self.__verbose:
+            # hist left of background_threshold should be black, and rigth should be white
+            pixel_values_left = pixel_values[pixel_values < background_threshold]
+            pixel_values_right = pixel_values[pixel_values > background_threshold]
+            sns.histplot(pixel_values_left, bins=int(256 / 4), color='#000000')
+            sns.histplot(pixel_values_right, bins=int(256 / 4), color='#ffffff')
+            plt.yscale('log')
+            plt.title(f"Histogram of {n}*{n} evenly distributed pixel values")
+            plt.ylabel("log(count)")
+            plt.xlabel("Pixel value")
+            plt.axvline(background_threshold, color='r', linestyle='dashed', linewidth=2)
+            plt.legend(["Background pixels", "Satellite " "background threshold"])
+            plt.show()
+            exit(0)
+        # if self.__verbose:
+        # plt.plot(hist)
+        # plt.hist(pixel_values, bins=int(256 / 4))
+        # # log y
+        # plt.yscale('log')
+        # plt.title(f"Histogram of {n}*{n} evenly distributed pixel values")
+        # plt.ylabel("log(count)")
+        # plt.xlabel("pixel value")
+        # plt.axvline(background_threshold, color='r', linestyle='dashed', linewidth=2)
+        # # gist left of background_threshold should be black, and rigth should be white
+        # plt.hist(pixel_values[pixel_values < background_threshold], bins=int(256 / 4))
+        # plt.hist(pixel_values[pixel_values > background_threshold], bins=int(256 / 4))
+        # plt.legend(["histogram", "background threshold"])
+        # plt.show()
+        # exit(0)
 
         # find the index of pixel_values that are above the background threshold in x and y
         above_background = np.where(pixel_values > background_threshold)
