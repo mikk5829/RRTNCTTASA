@@ -78,6 +78,7 @@ class Object:
     __satellite_points = None
     # the index of the furthest point in the pose map
     __furthest_index = None
+    __vertices = None
     file_name = None
 
     def __init__(self, raw_image, simplify_contours=False, verbose=False, is_model=False, file_name=None):
@@ -85,6 +86,7 @@ class Object:
         self.__raw_image = raw_image
         self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
+        # self.__find_vertices()
         self.__set_bounding_box()
         self.file_name = file_name
 
@@ -122,19 +124,14 @@ class Object:
         std = np.std(pixel_values)  # - np.mean(pixel_values)
         background_threshold = np.argmax(hist) + std * 2
         if self.__verbose:
-            # hist left of background_threshold should be black, and rigth should be white
-            pixel_values_left = pixel_values[pixel_values < background_threshold]
-            pixel_values_right = pixel_values[pixel_values > background_threshold]
-            sns.histplot(pixel_values_left, bins=int(256 / 4), color='#000000')
-            sns.histplot(pixel_values_right, bins=int(256 / 4), color='#ffffff')
+            plt.axvline(background_threshold, color='#F2DB66', linestyle='dashed', linewidth=2)
+            sns.histplot(pixel_values, bins=int(256 / 4), color='#021226')
             plt.yscale('log')
             plt.title(f"Histogram of {n}*{n} evenly distributed pixel values")
             plt.ylabel("log(count)")
             plt.xlabel("Pixel value")
-            plt.axvline(background_threshold, color='r', linestyle='dashed', linewidth=2)
-            plt.legend(["Background pixels", "Satellite " "background threshold"])
+            plt.legend(["Background threshold", "Pixel values"])
             plt.show()
-            exit(0)
         # if self.__verbose:
         # plt.plot(hist)
         # plt.hist(pixel_values, bins=int(256 / 4))
@@ -173,13 +170,6 @@ class Object:
             abs_grad_y = cv.convertScaleAbs(sobely)
 
             grad = cv.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
-            # if self.__verbose:
-            #     plt.imshow(sobelx, cmap='gray')
-            #     plt.show()
-            #     plt.imshow(sobely, cmap='gray')
-            #     plt.show()
-            #     plt.imshow(grad, cmap='gray')
-            #     plt.show()
 
             # find contours in the image grad
             ret, self.__threshold_image = cv.threshold(grad, 2, 255, cv.THRESH_BINARY)
@@ -205,7 +195,7 @@ class Object:
         """
         This function is used to simplify the contours of the object
         """
-        epsilon = 0.0025 * cv.arcLength(self.__contour, True)
+        epsilon = 0.0025 * cv.arcLength(self.__contour, True)  # 0.25% of arc length
         approx = cv.approxPolyDP(self.__contour, epsilon, True)
         self.__contour = approx
 
@@ -237,34 +227,6 @@ class Object:
             plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
             plt.show()
 
-        # contour_local = self.__contour
-        # shifted_contour = np.roll(self.__contour, -1, axis=0)
-        # diff = self.__contour - shifted_contour
-        # lines = np.concatenate([contour_local, shifted_contour], axis=1)
-        # lengths = np.sqrt(np.sum(diff ** 2, axis=2))
-        # # find n longest lines
-        # n = 3
-        # longest_line_index = np.argsort(lengths.squeeze())[-n:]
-        # longest_line_index = sorted(longest_line_index)
-        # lines = lines[longest_line_index]
-        #
-        # # add 1 to longest_line_index to get the next point remember to wrap around
-        # longest_line_index_all = np.array(longest_line_index) + 1
-        # longest_line_index_all = np.mod(longest_line_index_all, len(self.__contour))
-        #
-        # # select longest_line_index from self.__contour
-        # newLines = self.__contour.squeeze()[longest_line_index_all]
-        # reshape newLines to  self.__contour.shape
-
-        # if self.__verbose:
-        #     plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
-        #     # plot the lines (coordinates) on the contour
-        #     for line in lines:
-        #         plt.plot(line[:, 0], line[:, 1], "b")
-        #     plt.show()
-
-        # self.__contour = newLines.reshape((newLines.shape[0], 1, newLines.shape[1]))
-
         # find bounding box coordinates and crop the image
         img_x, img_y, img_width, img_height = cv.boundingRect(self.__contour)
         self.__threshold_image = self.__threshold_image[img_y:img_y + img_height, img_x:img_x + img_width]
@@ -278,6 +240,15 @@ class Object:
         relative_cnt = self.__contour - coordinates.as_tuple()
 
         self.__relative_contour = relative_cnt
+
+    def __find_vertices(self):
+        # find n longest edges in the contour
+        n = 20
+        # find edges in contour
+        edges = np.array([self.__contour.squeeze()[i + 1] - self.__contour.squeeze()[i] for i in
+                          range(len(self.__contour.squeeze()) - 1)])
+
+        # self.__vertices = vertices
 
     def __align_image(self):
         color_img = cv.cvtColor(self.__threshold_image, cv.COLOR_GRAY2RGB)
