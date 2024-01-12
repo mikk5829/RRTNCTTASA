@@ -1,3 +1,5 @@
+import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -6,6 +8,11 @@ from models.moments import Coordinates, Moments, SimpleCoordinates
 import cv2 as cv
 
 from models.pose import Pose, Rotation, Translation
+
+
+def plot_contour(contour, color="b"):
+    plt.plot(np.append(contour[:, 0, 0], contour[0, 0, 0]),
+             np.append(contour[:, 0, 1], contour[0, 0, 1]), color)
 
 
 def dynamic_threshold(blur_image, top_left, bottom_right, background_threshold, acc_img):
@@ -86,7 +93,7 @@ class Object:
         self.__raw_image = raw_image
         self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
-        # self.__find_vertices()
+        self.__find_vertices()
         self.__set_bounding_box()
         self.file_name = file_name
 
@@ -132,21 +139,6 @@ class Object:
             plt.xlabel("Pixel value")
             plt.legend(["Background threshold", "Pixel values"])
             plt.show()
-        # if self.__verbose:
-        # plt.plot(hist)
-        # plt.hist(pixel_values, bins=int(256 / 4))
-        # # log y
-        # plt.yscale('log')
-        # plt.title(f"Histogram of {n}*{n} evenly distributed pixel values")
-        # plt.ylabel("log(count)")
-        # plt.xlabel("pixel value")
-        # plt.axvline(background_threshold, color='r', linestyle='dashed', linewidth=2)
-        # # gist left of background_threshold should be black, and rigth should be white
-        # plt.hist(pixel_values[pixel_values < background_threshold], bins=int(256 / 4))
-        # plt.hist(pixel_values[pixel_values > background_threshold], bins=int(256 / 4))
-        # plt.legend(["histogram", "background threshold"])
-        # plt.show()
-        # exit(0)
 
         # find the index of pixel_values that are above the background threshold in x and y
         above_background = np.where(pixel_values > background_threshold)
@@ -155,6 +147,9 @@ class Object:
         y = y[above_background]
 
         self.__satellite_points = np.array([x, y]).T
+
+        # median filter
+        blur_image = cv.medianBlur(blur_image, 7)
 
         # plot the coordinates
         if self.__verbose:
@@ -170,32 +165,16 @@ class Object:
             abs_grad_y = cv.convertScaleAbs(sobely)
 
             grad = cv.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
-
             # find contours in the image grad
             ret, self.__threshold_image = cv.threshold(grad, 2, 255, cv.THRESH_BINARY)
         else:
             ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
 
-        # contours, hierarchy = cv.findContours(self.__threshold_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        # # find the longest contour
-        # contour = max(contours, key=cv.contourArea)
-        # self.__contour = contour
-        # plot the contour
-        # if self.__verbose:
-        #     plt.imshow(grad, cmap='gray')
-        #     plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
-        #     plt.show()
-
-        # coordinates = self.__moments.coordinates()
-        # self.__threshold_image = rotate_image_around_center_of_mass(self.__threshold_image,
-        #                                                             coordinates.orientation_degrees,
-        #                                                             coordinates.x, coordinates.y)
-
     def __simplify_contours(self):
         """
         This function is used to simplify the contours of the object
         """
-        epsilon = 0.0025 * cv.arcLength(self.__contour, True)  # 0.25% of arc length
+        epsilon = 0.002 * cv.arcLength(self.__contour, True)  # 0.25% of arc length
         approx = cv.approxPolyDP(self.__contour, epsilon, True)
         self.__contour = approx
 
@@ -222,9 +201,9 @@ class Object:
         if simplify_contours:
             self.__simplify_contours()
 
-            if self.__verbose:
-                plt.imshow(self.__threshold_image, cmap='gray')
-            plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+        if self.__verbose:
+            plt.imshow(self.__threshold_image, cmap='gray')
+            plot_contour(self.__contour, "r")
             plt.show()
 
         # find bounding box coordinates and crop the image
@@ -242,11 +221,62 @@ class Object:
         self.__relative_contour = relative_cnt
 
     def __find_vertices(self):
-        # find n longest edges in the contour
-        n = 20
-        # find edges in contour
-        edges = np.array([self.__contour.squeeze()[i + 1] - self.__contour.squeeze()[i] for i in
-                          range(len(self.__contour.squeeze()) - 1)])
+        # find the vertices of the contour
+        squeeze = self.__contour.squeeze()
+
+        # Initialize an empty list to store corner points
+        corner_points = []
+        lines = []
+
+        # Iterate over all points in the contour array
+        for i in range(len(squeeze)):
+            # Get the current point and the next point
+            last_point = squeeze[i - 1]
+            current_point = squeeze[i]
+            # if out of bounds, wrap around
+            if i + 1 >= len(squeeze):
+                next_point = squeeze[0]
+            else:
+                next_point = squeeze[i + 1]
+
+            # Calculate the length of the line segment
+            line_length_last = np.sqrt(
+                (last_point[0] - current_point[0]) ** 2 + (last_point[1] - current_point[1]) ** 2)
+            line_length_next = np.sqrt((current_point[0] - next_point[0]) ** 2 + (current_point[1] - next_point[1])
+                                       ** 2)
+
+            lines.append(line_length_last)
+            # Check if the length of the line segment is at least 5
+            if line_length_last >= 5 and line_length_next >= 5:
+                # Calculate the angle between the two line segments
+                angle = np.arctan2(last_point[1] - current_point[1], last_point[0] - current_point[0]) - \
+                        np.arctan2(next_point[1] - current_point[1], next_point[0] - current_point[0])
+                angle = np.degrees(angle)  # Convert the angle to degrees
+                angle %= 180  # Normalize the angle between 0 and 180 degrees
+                angle = np.abs(angle)  # Get the absolute value of the angle
+                # Check if the angle between the line segments is between 80 and 100 degrees
+                if 80 <= angle <= 100:
+                    # Add the current point to the list of corner points
+                    corner_points.append(current_point)
+
+        # Print the corner points
+        corner_points = np.array(corner_points)
+        print(corner_points)
+
+        # plot the corner points
+        plot_contour(self.__contour, "r")
+        plt.plot(corner_points.squeeze()[:, 0], corner_points.squeeze()[:, 1], "b*")
+        plt.show()
+
+        # find index of 20 longest lines
+        indices = np.argsort(lines)[-5:]
+        # get the points of the 20 longest lines
+        points = squeeze[indices]
+
+        # plot the points as individual lines
+        # for point in points:
+        #     plt.plot(point[:, 0], point[:, 1], "r")
+        # plt.show()
 
         # self.__vertices = vertices
 

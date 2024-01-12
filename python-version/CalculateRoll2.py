@@ -4,13 +4,13 @@ import sys
 import math
 import cv2 as cv
 
+
 def main(argv):
     img_name = "..blender\\0.363_-0.759_0.541.png"
     # read image as grayscale image
     img = cv.imread(img_name, cv.IMREAD_GRAYSCALE)
     # gaussian blur the image
     img = cv.GaussianBlur(img, (5, 5), 0)
-
 
     img_name2 = "..blender\\0.369_-0.548_0.751.png"
     # read image as grayscale image
@@ -48,9 +48,9 @@ def main(argv):
     # Find the area of the contour
     area2 = cv.contourArea(cnt2)
 
-    print("Scale factor from contour area: ", area2/area)
+    print("Scale factor from contour area: ", area2 / area)
 
-    fs = area2/area
+    fs = area2 / area
     CoM = [cx2, cy2]
     height, width, _ = img.shape
     print("XYZ: ", XYZ(width, height, CoM, fs))
@@ -86,7 +86,6 @@ def main(argv):
     dist = np.asarray(dist).squeeze()
     angle = np.asarray(angle).squeeze()
 
-
     # do the same for angle_shift and dist_shift
     dist_shift = np.asarray(dist_shift).squeeze()
     angle_shift = np.asarray(angle_shift).squeeze()
@@ -100,6 +99,7 @@ def main(argv):
 
     print("Roll angle - circular cross-correlation (deg): ", rollAngle, u"\u00B0")
     print("Roll angle - peak2peak (deg): ", rollAngle2, u"\u00B0")
+
 
 def calculate_roll2(A1, A2, B1, B2):
     parametric_curve = custom_uniform_interpolation(A1, A2)
@@ -129,7 +129,6 @@ def calculate_roll2(A1, A2, B1, B2):
 
 def custom_uniform_interpolation(X, Y):
     # Custom uniform interpolation to make X uniformly distributed between 0 and 360 degrees with spacing of 1 degree.
-
 
     # Ensure that X is within [0, 360] and sorted in ascending order.
     X = np.mod(X, 360)
@@ -180,32 +179,33 @@ def custom_uniform_interpolation(X, Y):
 
     return interpolated_Y
 
+
 def XYZ(width, height, CoM, fs):
     m = 1
     mm = 1e-3
     um = 1e-6
 
     # An Effective Focal Length of:
-    EFL_far = 20 * mm
+    f = 20 * mm
 
     # and a pixel size on the CCD of:
     CCDy = 8.6 * um
 
     # What is the distance from the camera to the model in Blender?
     zm = 10 * m
-    f = 20 * mm
 
     # The bigger the scale factor, the closer it is to us
     z = zm / fs
 
-    cx = math.floor(width/2)
-    cy = math.floor(height/2)
+    cx = math.floor(width / 2)
+    cy = math.floor(height / 2)
     px = ((CoM[0] - cx) * CCDy * z) / f
     py = ((CoM[1] - cy) * CCDy * z) / f
 
     XYZ = [px, py, z]
 
     return XYZ
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

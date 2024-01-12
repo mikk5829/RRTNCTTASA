@@ -204,7 +204,7 @@ class ContourService(IService):
         found_scores = []
         while not found_objects_pq.empty():
             score, found_object = found_objects_pq.get()
-            # exit when score is above 0.05
+            # exit when score is above 0.06
             if score > 0.06:
                 break
             # inverse_object = pose_map[found_object.get_furthest_index()]
@@ -285,6 +285,8 @@ class ContourService(IService):
             df.to_csv("matching_scores.csv")
         else:  # else it exists so append without writing the header
             df.to_csv("matching_scores.csv", mode='a', header=False)
+
+        print(df[df['reversed_best'] == False].sort_values(by=['max_val']).tail(4)[['roll', 'pitch', 'yaw', 'score']])
 
         # if df.head(1)['reversed_best'].bool():
         #     print(df[df['reversed_best'] == True].sort_values(by=['score']).head(1))
