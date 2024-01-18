@@ -55,10 +55,10 @@ class Moments:
         self.__set_coordinates()
 
     def __set_coordinates(self):
-        center_of_mass = cv.moments(self.__contour)
-        x = int(center_of_mass["m10"] / center_of_mass["m00"])
-        y = int(center_of_mass["m01"] / center_of_mass["m00"])
-        orientation = math.atan2(center_of_mass["mu11"], center_of_mass["mu20"] - center_of_mass["mu02"]) / 2
+        moments = cv.moments(self.__contour)
+        x = int(moments["m10"] / moments["m00"])
+        y = int(moments["m01"] / moments["m00"])
+        orientation = math.atan2(moments["mu11"], moments["mu20"] - moments["mu02"]) / 2
         self.__coordinates = Coordinates(x, y, orientation)
 
     def get_coordinates(self):

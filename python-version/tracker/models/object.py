@@ -93,7 +93,6 @@ class Object:
         self.__raw_image = raw_image
         self.__preprocess_image(is_model)
         self.__detect_contours(simplify_contours)
-        self.__find_vertices()
         self.__set_bounding_box()
         self.file_name = file_name
 
@@ -114,7 +113,9 @@ class Object:
 
     def __preprocess_image(self, is_model=False):
         # make a gaussian blur of the image to remove noise
-        blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
+        # blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
+        # median filter 5 x 5
+        blur_image = cv.medianBlur(self.__raw_image, 5)
 
         # get x pixels evenly distributed from the image
         n = 50
@@ -148,9 +149,6 @@ class Object:
 
         self.__satellite_points = np.array([x, y]).T
 
-        # median filter
-        blur_image = cv.medianBlur(blur_image, 7)
-
         # plot the coordinates
         if self.__verbose:
             plt.plot(x, y, "r*")
@@ -168,7 +166,7 @@ class Object:
             # find contours in the image grad
             ret, self.__threshold_image = cv.threshold(grad, 2, 255, cv.THRESH_BINARY)
         else:
-            ret, self.__threshold_image = cv.threshold(blur_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
+            ret, self.__threshold_image = cv.threshold(self.__raw_image, 0, 255, cv.THRESH_BINARY + cv.THRESH_TRIANGLE)
 
     def __simplify_contours(self):
         """
@@ -219,66 +217,6 @@ class Object:
         relative_cnt = self.__contour - coordinates.as_tuple()
 
         self.__relative_contour = relative_cnt
-
-    def __find_vertices(self):
-        # find the vertices of the contour
-        squeeze = self.__contour.squeeze()
-
-        # Initialize an empty list to store corner points
-        corner_points = []
-        lines = []
-
-        # Iterate over all points in the contour array
-        for i in range(len(squeeze)):
-            # Get the current point and the next point
-            last_point = squeeze[i - 1]
-            current_point = squeeze[i]
-            # if out of bounds, wrap around
-            if i + 1 >= len(squeeze):
-                next_point = squeeze[0]
-            else:
-                next_point = squeeze[i + 1]
-
-            # Calculate the length of the line segment
-            line_length_last = np.sqrt(
-                (last_point[0] - current_point[0]) ** 2 + (last_point[1] - current_point[1]) ** 2)
-            line_length_next = np.sqrt((current_point[0] - next_point[0]) ** 2 + (current_point[1] - next_point[1])
-                                       ** 2)
-
-            lines.append(line_length_last)
-            # Check if the length of the line segment is at least 5
-            if line_length_last >= 5 and line_length_next >= 5:
-                # Calculate the angle between the two line segments
-                angle = np.arctan2(last_point[1] - current_point[1], last_point[0] - current_point[0]) - \
-                        np.arctan2(next_point[1] - current_point[1], next_point[0] - current_point[0])
-                angle = np.degrees(angle)  # Convert the angle to degrees
-                angle %= 180  # Normalize the angle between 0 and 180 degrees
-                angle = np.abs(angle)  # Get the absolute value of the angle
-                # Check if the angle between the line segments is between 80 and 100 degrees
-                if 80 <= angle <= 100:
-                    # Add the current point to the list of corner points
-                    corner_points.append(current_point)
-
-        # Print the corner points
-        corner_points = np.array(corner_points)
-        print(corner_points)
-
-        # plot the corner points
-        plot_contour(self.__contour, "r")
-        plt.plot(corner_points.squeeze()[:, 0], corner_points.squeeze()[:, 1], "b*")
-        plt.show()
-
-        # find index of 20 longest lines
-        indices = np.argsort(lines)[-5:]
-        # get the points of the 20 longest lines
-        points = squeeze[indices]
-
-        # plot the points as individual lines
-        # for point in points:
-        #     plt.plot(point[:, 0], point[:, 1], "r")
-        # plt.show()
-
-        # self.__vertices = vertices
 
     def __align_image(self):
         color_img = cv.cvtColor(self.__threshold_image, cv.COLOR_GRAY2RGB)
@@ -335,9 +273,6 @@ class Object:
 
     def __str__(self) -> str:
         return f"Coordinates: {self.__moments.get_coordinates()}"
-
-    def set_pose(self, pose):
-        self.__pose = pose
 
 
 def rotate_image_around_center_of_mass(image: cv.UMat, angle_in_degrees, center_x, center_y):

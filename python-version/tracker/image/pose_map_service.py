@@ -72,15 +72,6 @@ class PoseMapService(IService):
                 index = int(float(index))
                 theta = float(theta)
                 phi = float(phi)
-                # calculate the cartesian coordinates of the object
-                # x = math.sin(theta) * math.cos(phi)
-                # y = math.sin(theta) * math.sin(phi)
-                # z = math.cos(theta)
-                # # our coordinate system is rotated, so we need to rotate it back
-                # x, y, z = x, -z, y
-                # # find the roll of the object
-                # roll = math.atan2(y, x)
-                # roll = math.degrees(roll)
 
                 rotation = Rotation(None, theta, phi, channel)
                 tracked_object.set_rotation(rotation)

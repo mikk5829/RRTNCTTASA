@@ -73,20 +73,19 @@ def custom_uniform_interpolation(angle, dist):
     return interpolated_Y
 
 
-def XYZ(width, height, CoM, fs):
+def get_translation(width, height, CoM, fs):
     m = 1
     mm = 1e-3
     um = 1e-6
 
     # An Effective Focal Length of:
-    EFL_far = 20 * mm
+    f = 20 * mm
 
     # and a pixel size on the CCD of:
     CCDy = 8.6 * um
 
     # What is the distance from the camera to the model in Blender?
-    zm = 10 * m
-    f = 20 * mm
+    zm = 22 * m
 
     # The bigger the scale factor, the closer it is to us
     z = zm / fs
@@ -201,13 +200,21 @@ class ContourService(IService):
             scores.append(local_score)
 
         found_rotation_list = []
+        found_translation_list = []
         found_scores = []
         while not found_objects_pq.empty():
             score, found_object = found_objects_pq.get()
             # exit when score is above 0.06
-            if score > 0.06:
+            if score > 0.04:
                 break
             # inverse_object = pose_map[found_object.get_furthest_index()]
+            fs = cv.contourArea(tracked_object.get_contour()) / cv.contourArea(found_object.get_contour())
+            translation = get_translation(self.__image_service.get_image().shape[1],
+                                          self.__image_service.get_image().shape[0],
+                                          tracked_object.get_moments().get_coordinates().as_tuple(),
+                                          fs)
+            found_translation_list.append(translation)
+
             roll = calculate_roll(found_object, tracked_object)
             found_rotation_list.append(roll)
             found_scores.append(score)
@@ -230,29 +237,14 @@ class ContourService(IService):
                 plt.legend(["Image", "3D Model", "Inverse 3D Model", "Image COM", "3D Model COM"])
                 plt.show()
 
-        # for found_object in found_objects:
-        #     roll = calculate_roll(found_object, tracked_object)
-        #     found_rotation_list.append(roll)
-        #     # plot the found_object, tracked_object
-        #     if self.verbose:
-        #         plt.plot(tracked_object_contour[:, 0, 0], tracked_object_contour[:, 0, 1], "r")
-        #         plt.plot(found_object.get_contour()[:, 0, 0], found_object.get_contour()[:, 0, 1], "b")
-        #         plt.title(f"Contour matching", wrap=True)
-        #         plt.suptitle(roll[0], wrap=True)
-        #         plt.xlabel("x")
-        #         plt.ylabel("y")
-        #         # flip y axis to make it look like the image
-        #         plt.gca().invert_yaxis()
-        #         plt.plot(tracked_object.coordinates.x, tracked_object.coordinates.y, "r*")
-        #         plt.plot(found_object.coordinates.x, found_object.coordinates.y, "b*")
-        #         plt.legend(["Image", "3D Model", "Image COM", "3D Model COM"])
-        #         plt.show()
-
-        # make the dataframe from tuple list found_rotation_list and scores
-        # unpack found_rotation_list
-
         df = pd.DataFrame.from_records(found_rotation_list,
                                        columns=['rotation', 'max_val', 'rotation_reverse', 'max_val_reverse'])
+        df['translation'] = found_translation_list
+
+        df['x'] = df['translation'].apply(lambda x: x.x)
+        df['y'] = df['translation'].apply(lambda x: x.y)
+        df['z'] = df['translation'].apply(lambda x: x.z)
+
         df['score'] = found_scores
         # if max_val_reverse > max_val then remove the row
         # df['matching_score'] = scores
@@ -271,6 +263,11 @@ class ContourService(IService):
         df['pitch_reverse'] = df['rotation_reverse'].apply(lambda x: x.pitch)
         df['yaw_reverse'] = df['rotation_reverse'].apply(lambda x: x.yaw)
 
+        # if df is empty add a row with all zeros
+        if df.empty:
+            df.loc[len(df)] = 0
+            df['file_name'] = tracked_object.file_name
+
         # df = pd.DataFrame.from_dict(found_rotation_list, orient='index')
 
         # for i, found_object in enumerate(found_rotation_list):
@@ -286,7 +283,8 @@ class ContourService(IService):
         else:  # else it exists so append without writing the header
             df.to_csv("matching_scores.csv", mode='a', header=False)
 
-        print(df[df['reversed_best'] == False].sort_values(by=['max_val']).tail(4)[['roll', 'pitch', 'yaw', 'score']])
+        # print(df[df['reversed_best'] == False].sort_values(by=['max_val']).tail(4)[['roll', 'pitch', 'yaw', 'score']])
+        # print(df[df['reversed_best'] == False].sort_values(by=['max_val']).tail(4)[['translation']])
 
         # if df.head(1)['reversed_best'].bool():
         #     print(df[df['reversed_best'] == True].sort_values(by=['score']).head(1))
