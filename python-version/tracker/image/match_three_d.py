@@ -10,6 +10,7 @@ import pandas as pd
 from scipy.optimize import minimize
 from scipy.spatial import KDTree
 import scipy.io
+from tqdm import tqdm
 
 from models.pose import Rotation, Translation
 
@@ -97,7 +98,7 @@ def match_three_d(two_d_points, weights, initial_guess):
                                                                                                                    None))
     res = minimize(loss_minimize, initial_guess, args=(two_d_points, weights), bounds=bounds,
                    method='Nelder-Mead',
-                   options={'maxiter': 1000, 'fatol': 50, 'adaptive': True, 'disp': True})
+                   options={'maxiter': 1000, 'adaptive': True})
     # rotation = Rotation(res.x[0], res.x[1], res.x[2])
     # translation = Translation(res.x[3], res.x[4], res.x[5])
 
@@ -150,48 +151,50 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     tree = KDTree(point2d_rotated)
 
     weights = np.array(sorted(weights, reverse=True))
-    # remove weights that are too small
-    # weights = weights[weights > 0.1]
     two_d_points = two_d_points[(-weights).argsort()]
 
-    if len(two_d_points) < 3:
-        print("too few points")
-        return 1000000
+    # plot_2d(two_d_points, point2d_rotated,
+    #         legend=["Found 2d points",
+    #                 "Projected 3d points"],
+    #         labels=weights)
 
     # find the closest 3d point for each 2d point
     closest_points = []
     for point in two_d_points:
         closest = tree.query(point)[1]
-        if closest not in closest_points:
-            closest_points.append(closest)
-        else:
-            closest_points.append(-1)
+        closest_points.append(closest)
 
-    # two_d_points_tree = KDTree(two_d_points)
-    #
-    # # find the closest 2d point for each 3d point
-    # closest_points_2d = []
-    # for point in point2d_rotated:
-    #     closest = two_d_points_tree.query(point)[1]
-    #     if closest not in closest_points_2d:
-    #         closest_points_2d.append(closest)
-    #     else:
-    #         closest_points_2d.append(-1)
-
+    distances = np.linalg.norm(point2d_rotated[closest_points] - two_d_points, axis=1)
     closest_points = np.array(closest_points)
-    # remove two_d_points with -1
-    two_d_points = two_d_points[closest_points != -1]
-    closest_points = closest_points[closest_points != -1]
+    # if closest_points has duplicates, remove them based on distances
+    u, c = np.unique(closest_points, return_counts=True)
+    dup = u[c > 1]
+    for d in dup:
+        # get all indices of d
+        indices = np.where(closest_points == d)[0]
+        # remove the one with the highest distance
+        to_delete = indices[np.argmax(distances[indices])]
+        closest_points = np.delete(closest_points, to_delete)
+        two_d_points = np.delete(two_d_points, to_delete, axis=0)
 
     point2d_rotated = point2d_rotated[closest_points]
 
+    # plot_2d(two_d_points, point2d_rotated,
+    #         legend=["Found 2d points",
+    #                 "Projected 3d points"])
+
     distances = np.linalg.norm(point2d_rotated - two_d_points, axis=1)
     # remove points that are outliers based on distance
-    upper_bound = np.mean(distances) + 3 * np.std(distances)
+    upper_bound = np.mean(distances) + 1.7 * np.std(distances)
     two_d_points = two_d_points[distances < upper_bound]
+    point2d_rotated = point2d_rotated[distances < upper_bound]
 
     # weights should be same length as two_d_points
-    weights = weights[:len(two_d_points)]
+    weights = weights[:two_d_points.shape[0]]
+
+    if len(two_d_points) < 3:
+        # print("too few points")  # TODO maybe decrease std?
+        return 1000000
 
     # calculate the weighted squared loss and return
     weighted_squared_loss = np.sum(np.square(two_d_points - point2d_rotated).T * weights)
@@ -204,6 +207,7 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
 # main
 if __name__ == "__main__":
+    start_time = timeit.default_timer()
     df_init = pd.read_csv("tracker/best_scores.csv")
     mat = scipy.io.loadmat("tracker/all_vertices_mat.mat")
 
@@ -211,10 +215,12 @@ if __name__ == "__main__":
     # set last 3 to 0 to remove translation
     initial_guess[-3:] = 0
 
-    for img_number in df_init.index:
+    fine_data = []
+
+    for img_number in tqdm(df_init.index):
         data = []
         points = []
-        tries = 5
+        tries = 5  # number of tries to get a good result
 
         file_name = df_init.iloc[img_number].values[1:][0]
 
@@ -234,22 +240,35 @@ if __name__ == "__main__":
 
         image_points -= size[1] // 2, size[0] // 2
 
-        plot_2d(image_points, title=f"original image {img_number}", labels=weights)
+        # plot_2d(image_points, title=f"original image {img_number}", labels=weights)
 
         while True:
             internal_loss, new_guess = match_three_d(image_points, weights, initial_guess)
-            if internal_loss < 40 or tries == 0:
+            if internal_loss < 10 or tries == 0:
                 break
             else:
                 tries -= 1
                 initial_guess = new_guess
 
+        fine_data.append([img_number, iteration, internal_loss, new_guess[0], new_guess[1], new_guess[2], new_guess[3],
+                          new_guess[4],
+                          new_guess[5]])
+
         initial_guess = new_guess
         iteration = 0
 
-        for i, row in enumerate(points):
-            if i == 0 or i == len(points) - 1:
-                time.sleep(1)
-                plot_2d(row[0], row[1], title=f"iteration {data[i][0]} loss {data[i][1]:.2f}",
-                        legend=["Found 2d points",
-                                "Projected 3d points"])
+        if img_number == -1:
+            for i, row in enumerate(points):
+                if i == 0 or i == len(points) - 1:
+                    time.sleep(0.5)
+                    plot_2d(row[0], row[1], title=f"iteration {data[i][0]} loss {data[i][1]:.2f}",
+                            legend=["Found 2d points",
+                                    "Projected 3d points"])
+                    time.sleep(0.5)
+
+    end_time = timeit.default_timer()
+    print(f"Time: {end_time - start_time:.2f}s")
+
+    df_fine = pd.DataFrame(fine_data,
+                           columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
+    # df_fine.to_csv("tracker/fine_scores.csv", index=False)
