@@ -87,20 +87,21 @@ three_d_points = np.array([
 
 data = []
 points = []
+all_distances = []
 iteration = 0
 
 
 def match_three_d(two_d_points, weights, initial_guess):
     roll, pitch, yaw, x, y, z = initial_guess
-    deg = 20
+    deg = 10
+    trans_z = 1
+    trans = 0.1
     bounds = (
-        (roll - deg, roll + deg), (pitch - deg, pitch + deg), (yaw - deg, yaw + deg), (None, None), (None, None), (None,
-                                                                                                                   None))
+        (roll - deg, roll + deg), (pitch - deg, pitch + deg), (yaw - deg, yaw + deg), (x - trans, x + trans),
+        (y - trans, y + trans), (z - trans_z, z + trans_z))
     res = minimize(loss_minimize, initial_guess, args=(two_d_points, weights), bounds=bounds,
                    method='Nelder-Mead',
-                   options={'maxiter': 1000, 'adaptive': True})
-    # rotation = Rotation(res.x[0], res.x[1], res.x[2])
-    # translation = Translation(res.x[3], res.x[4], res.x[5])
+                   options={'maxiter': 300, 'adaptive': True})
 
     return res.fun, res.x
 
@@ -116,9 +117,6 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     mm = 1e-3
     um = 1e-6
     f = 20 * mm
-
-    cx = math.floor(size[1] / 2)
-    cy = math.floor(size[0] / 2)
 
     r_roll = np.array([[1, 0, 0],
                        [0, math.cos(roll / 180 * math.pi), -math.sin(roll / 180 * math.pi)],
@@ -184,6 +182,8 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     #                 "Projected 3d points"])
 
     distances = np.linalg.norm(point2d_rotated - two_d_points, axis=1)
+    # exp_lambda = 1 / np.mean(distances)
+    # upper_bound = np.log(5) / exp_lambda
     # remove points that are outliers based on distance
     upper_bound = np.mean(distances) + 1.7 * np.std(distances)
     two_d_points = two_d_points[distances < upper_bound]
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     for img_number in tqdm(df_init.index):
         data = []
         points = []
-        tries = 5  # number of tries to get a good result
+        tries = 2  # number of tries to get a good result
 
         file_name = df_init.iloc[img_number].values[1:][0]
 
@@ -244,7 +244,7 @@ if __name__ == "__main__":
 
         while True:
             internal_loss, new_guess = match_three_d(image_points, weights, initial_guess)
-            if internal_loss < 10 or tries == 0:
+            if internal_loss < 5 or tries == 0:
                 break
             else:
                 tries -= 1
@@ -271,4 +271,4 @@ if __name__ == "__main__":
 
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
-    # df_fine.to_csv("tracker/fine_scores.csv", index=False)
+    df_fine.to_csv("tracker/fine_scores.csv", index=False)
