@@ -12,25 +12,7 @@ from scipy.spatial import KDTree
 import scipy.io
 from tqdm import tqdm
 
-from models.pose import Rotation, Translation
-
-# 3D model points.
-# three_d_points = np.array([
-#     [0.35, -0.18, -0.01],  # Top right solar panel
-#     [0.13, -0.18, -0.02],  # Top left solar panel
-#     [0.35, 0.12, -0.01],  # Bottom right solar panel
-#     [0.13, 0.12, -0.02],  # Bottom left solar panel
-#     [-0.15, 0.09, -0.04],  # Bottom left satellite
-#     [-0.15, -0.08, -0.04],  # Top left satellite
-# ])
-
 labels = ["TR", "TL", "BR", "BL", "BLS", "TLS"]
-
-
-# im = cv.imread("test_images/dynamic_unknowndeg_0to360_5degstep/A240105_15341532.png")
-# im = cv.imread("test_images/tesx_x.png")
-# size = im.shape
-# com = (364, 209)
 
 
 def plot_3d(points):
@@ -82,7 +64,8 @@ three_d_points = np.array([
     [-0.08, -2.30333333, -0.78333333],  # Bottom right solar panel
     [-0.15666667, -0.84333333, -0.78333333],  # Bottom left solar panel
     [-0.24333333, 1.03, -0.65333333],  # Bottom left satellite
-    [-0.24666667, 1.01333333, 0.69333333],  # Top left satellite
+    # [-0.24666667, 1.01333333, 0.69333333],  # Top left satellite
+    # [0.7566, 1.03, -0.65333333],
 ])
 
 data = []
@@ -91,17 +74,10 @@ all_distances = []
 iteration = 0
 
 
-def match_three_d(two_d_points, weights, initial_guess):
-    roll, pitch, yaw, x, y, z = initial_guess
-    deg = 10
-    trans_z = 1
-    trans = 0.1
-    bounds = (
-        (roll - deg, roll + deg), (pitch - deg, pitch + deg), (yaw - deg, yaw + deg), (x - trans, x + trans),
-        (y - trans, y + trans), (z - trans_z, z + trans_z))
+def match_three_d(two_d_points, weights, initial_guess, bounds):
     res = minimize(loss_minimize, initial_guess, args=(two_d_points, weights), bounds=bounds,
                    method='Nelder-Mead',
-                   options={'maxiter': 300, 'adaptive': True})
+                   options={'maxiter': 750, 'adaptive': True})
 
     return res.fun, res.x
 
@@ -186,6 +162,7 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     # upper_bound = np.log(5) / exp_lambda
     # remove points that are outliers based on distance
     upper_bound = np.mean(distances) + 1.7 * np.std(distances)
+
     two_d_points = two_d_points[distances < upper_bound]
     point2d_rotated = point2d_rotated[distances < upper_bound]
 
@@ -207,9 +184,10 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
 # main
 if __name__ == "__main__":
+    folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
-    df_init = pd.read_csv("tracker/best_scores.csv")
-    mat = scipy.io.loadmat("tracker/all_vertices_mat.mat")
+    df_init = pd.read_csv(folder + "best_scores.csv")
+    mat = scipy.io.loadmat(folder + "all_vertices_mat.mat")
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
@@ -218,46 +196,71 @@ if __name__ == "__main__":
     fine_data = []
 
     for img_number in tqdm(df_init.index):
+        if (img_number == 0 or img_number % 9 == 0) and folder == "test_images/perfect_5degstep/":
+            continue  # skip the bad images
         data = []
         points = []
-        tries = 2  # number of tries to get a good result
+        tries = 10  # number of tries to get a good result
+        trial_multiplier = 1
 
         file_name = df_init.iloc[img_number].values[1:][0]
 
-        im = cv.imread("test_images/dynamic_unknowndeg_0to360_5degstep/" + file_name)
+        im = cv.imread(folder + file_name)
         size = im.shape
 
         image_points = mat['all_vertices'][img_number][0]
 
         # remove rows where the last column is below 0.1
-        image_points = image_points[image_points[:, 2] > 0.1]
+        image_points = image_points[image_points[:, 2] > 0.11]
 
         weights = image_points[:, 2]
 
         image_points = image_points[:, :2]
 
-        image_points[:, 0] += 104
+        # image_points[:, 0] += 104
 
         image_points -= size[1] // 2, size[0] // 2
 
         # plot_2d(image_points, title=f"original image {img_number}", labels=weights)
+        # continue
+
+        # if tries < 3:
+        #     plot_2d(image_points, title=f"original image {img_number}", labels=weights)
+
+        roll, pitch, yaw, x, y, z = initial_guess
+        deg = 8 * trial_multiplier
+        trans_z = 1 * trial_multiplier
+        trans = 0.5 * trial_multiplier
+        bounds = (
+            (roll - deg, roll + deg), (pitch - deg, pitch + deg), (yaw - deg, yaw + deg), (x - trans, x + trans),
+            (y - trans, y + trans), (z - trans_z, z + trans_z))
 
         while True:
-            internal_loss, new_guess = match_three_d(image_points, weights, initial_guess)
-            if internal_loss < 5 or tries == 0:
+            internal_loss, new_guess = match_three_d(image_points, weights, initial_guess, bounds)
+            if internal_loss < 2 or tries == 0:
                 break
             else:
                 tries -= 1
                 initial_guess = new_guess
+                # if len(weights) > 3:
+                # weights = weights[:-1]
+                # image_points = image_points[:-1]
 
         fine_data.append([img_number, iteration, internal_loss, new_guess[0], new_guess[1], new_guess[2], new_guess[3],
                           new_guess[4],
                           new_guess[5]])
 
-        initial_guess = new_guess
+        if internal_loss < 5:
+            initial_guess = new_guess
+            trial_multiplier = 1
+        else:
+            trial_multiplier += 1
+            # initial_guess = df_init.iloc[img_number].values[1:][2:]
+            # # set last 3 to 0 to remove translation
+            # initial_guess[-3:] = 0
         iteration = 0
 
-        if img_number == -1:
+        if False:
             for i, row in enumerate(points):
                 if i == 0 or i == len(points) - 1:
                     time.sleep(0.5)
@@ -271,4 +274,4 @@ if __name__ == "__main__":
 
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
-    df_fine.to_csv("tracker/fine_scores.csv", index=False)
+    df_fine.to_csv(folder + "fine_scores.csv", index=False)
