@@ -187,11 +187,13 @@ if __name__ == "__main__":
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
-    mat = scipy.io.loadmat(folder + "all_vertices_mat.mat")
+    mat = scipy.io.loadmat(folder + "all_vertices_mat_eps3.mat")
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
     initial_guess[-3:] = 0
+
+    initial_guess = [-52, -109, 138, 0, 0, 0]
 
     fine_data = []
 
@@ -217,7 +219,7 @@ if __name__ == "__main__":
 
         image_points = image_points[:, :2]
 
-        # image_points[:, 0] += 104
+        image_points[:, 0] += 104
 
         image_points -= size[1] // 2, size[0] // 2
 
@@ -228,11 +230,14 @@ if __name__ == "__main__":
         #     plot_2d(image_points, title=f"original image {img_number}", labels=weights)
 
         roll, pitch, yaw, x, y, z = initial_guess
-        deg = 8 * trial_multiplier
-        trans_z = 1 * trial_multiplier
-        trans = 0.5 * trial_multiplier
+        deg_roll = 8 * trial_multiplier
+        deg_pitch = 4 * trial_multiplier
+        deg_yaw = 4 * trial_multiplier
+        trans_z = 0.2 * trial_multiplier
+        trans = 0.2 * trial_multiplier
         bounds = (
-            (roll - deg, roll + deg), (pitch - deg, pitch + deg), (yaw - deg, yaw + deg), (x - trans, x + trans),
+            (roll - deg_roll, roll + deg_roll), (pitch - deg_pitch, pitch + deg_pitch), (yaw - deg_yaw, yaw + deg_yaw),
+            (x - trans, x + trans),
             (y - trans, y + trans), (z - trans_z, z + trans_z))
 
         while True:
@@ -274,4 +279,4 @@ if __name__ == "__main__":
 
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
-    df_fine.to_csv(folder + "fine_scores.csv", index=False)
+    df_fine.to_csv(folder + "fine_scores_3eps.csv", index=False)
