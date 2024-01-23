@@ -76,8 +76,8 @@ iteration = 0
 
 def match_three_d(two_d_points, weights, initial_guess, bounds):
     res = minimize(loss_minimize, initial_guess, args=(two_d_points, weights), bounds=bounds,
-                   method='Nelder-Mead',
-                   options={'maxiter': 750, 'adaptive': True})
+                   method='L-BFGS-B',
+                   options={})
 
     return res.fun, res.x
 
@@ -187,23 +187,41 @@ if __name__ == "__main__":
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
-    mat = scipy.io.loadmat(folder + "all_vertices_mat_eps3.mat")
+    suffix = "_linefit_eps4"
+    mat = scipy.io.loadmat(folder + "vertices" + suffix + ".mat")
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
     initial_guess[-3:] = 0
 
-    initial_guess = [-52, -109, 138, 0, 0, 0]
-
     fine_data = []
+
+    deg_roll_sma = 0
+    deg_pitch_sma = 0
+    deg_yaw_sma = 0
+    trans_x_sma = 0
+    trans_y_sma = 0
+    trans_z_sma = 0
+
+    deg_roll_std = 8
+    deg_pitch_std = 4
+    deg_yaw_std = 4
+    trans_x_std = 0.2
+    trans_y_std = 0.2
+    trans_z_std = 0.2
+
+    trial_multiplier = 2  # high value means more uncertainty
 
     for img_number in tqdm(df_init.index):
         if (img_number == 0 or img_number % 9 == 0) and folder == "test_images/perfect_5degstep/":
             continue  # skip the bad images
+
+        # skip_img = [35, 36, 53, 68, 69]
+        # if (img_number in skip_img) and folder == "test_images/dynamic_unknowndeg_0to360_5degstep/":
+        #     continue  # skip the bad images
         data = []
         points = []
-        tries = 10  # number of tries to get a good result
-        trial_multiplier = 1
+        tries = 3  # number of tries to get a good result
 
         file_name = df_init.iloc[img_number].values[1:][0]
 
@@ -212,7 +230,7 @@ if __name__ == "__main__":
 
         image_points = mat['all_vertices'][img_number][0]
 
-        # remove rows where the last column is below 0.1
+        # remove rows where the weight column is below 0.11
         image_points = image_points[image_points[:, 2] > 0.11]
 
         weights = image_points[:, 2]
@@ -223,53 +241,73 @@ if __name__ == "__main__":
 
         image_points -= size[1] // 2, size[0] // 2
 
-        # plot_2d(image_points, title=f"original image {img_number}", labels=weights)
-        # continue
-
         # if tries < 3:
         #     plot_2d(image_points, title=f"original image {img_number}", labels=weights)
 
         roll, pitch, yaw, x, y, z = initial_guess
-        deg_roll = 8 * trial_multiplier
-        deg_pitch = 4 * trial_multiplier
-        deg_yaw = 4 * trial_multiplier
-        trans_z = 0.2 * trial_multiplier
-        trans = 0.2 * trial_multiplier
+        roll += deg_roll_sma
+        pitch += deg_pitch_sma
+        yaw += deg_yaw_sma
+        x += trans_x_sma
+        y += trans_y_sma
+        z += trans_z_sma
+        initial_guess = [roll, pitch, yaw, x, y, z]
+
+        deg_roll = deg_roll_std * trial_multiplier
+        deg_pitch = deg_pitch_std * trial_multiplier
+        deg_yaw = deg_yaw_std * trial_multiplier
+        trans_x = trans_x_std * trial_multiplier
+        trans_y = trans_y_std * trial_multiplier
+        trans_z = trans_z_std * trial_multiplier
+
         bounds = (
             (roll - deg_roll, roll + deg_roll), (pitch - deg_pitch, pitch + deg_pitch), (yaw - deg_yaw, yaw + deg_yaw),
-            (x - trans, x + trans),
-            (y - trans, y + trans), (z - trans_z, z + trans_z))
+            (x - trans_x, x + trans_x),
+            (y - trans_y, y + trans_y), (z - trans_z, z + trans_z))
 
         while True:
             internal_loss, new_guess = match_three_d(image_points, weights, initial_guess, bounds)
-            if internal_loss < 2 or tries == 0:
-                break
-            else:
-                tries -= 1
+            if internal_loss < 10:  # good result
                 initial_guess = new_guess
-                # if len(weights) > 3:
-                # weights = weights[:-1]
-                # image_points = image_points[:-1]
+                trial_multiplier = 1  # reset trial multiplier
+                break
+            elif tries == 0:  # no more tries
+                break  # no more tries
+            else:  # bad result
+                tries -= 1
+                trial_multiplier += 1.5  # increase trial multiplier to increase uncertainty
 
         fine_data.append([img_number, iteration, internal_loss, new_guess[0], new_guess[1], new_guess[2], new_guess[3],
                           new_guess[4],
                           new_guess[5]])
 
-        if internal_loss < 5:
-            initial_guess = new_guess
-            trial_multiplier = 1
-        else:
-            trial_multiplier += 1
-            # initial_guess = df_init.iloc[img_number].values[1:][2:]
-            # # set last 3 to 0 to remove translation
-            # initial_guess[-3:] = 0
+        n_ma = 5  # number of points to use for moving average
+        if len(fine_data) > n_ma:
+            # simple moving average
+            mean_diff = np.mean(np.diff(np.array(fine_data[-n_ma:]), axis=0), axis=0)
+            std_diff = np.std(np.diff(np.array(fine_data[-n_ma:]), axis=0), axis=0)
+            deg_roll_sma = mean_diff[3]
+            deg_pitch_sma = mean_diff[4]
+            deg_yaw_sma = mean_diff[5]
+            trans_x_sma = mean_diff[6]
+            trans_y_sma = mean_diff[7]
+            trans_z_sma = mean_diff[8]
+
+            deg_roll_std = std_diff[3] * 2
+            deg_pitch_std = std_diff[4] * 2
+            deg_yaw_std = std_diff[5] * 2
+            trans_x_std = std_diff[6] * 2
+            trans_y_std = std_diff[7] * 2
+            trans_z_std = std_diff[8] * 2
+
         iteration = 0
 
-        if False:
+        if internal_loss > 50:
             for i, row in enumerate(points):
-                if i == 0 or i == len(points) - 1:
+                if i == len(points) - 1:
                     time.sleep(0.5)
-                    plot_2d(row[0], row[1], title=f"iteration {data[i][0]} loss {data[i][1]:.2f}",
+                    # print("Trial multiplier: " + str(trial_multiplier))
+                    plot_2d(row[0], row[1], title=f"iteration {data[i][0]} loss {data[i][1]:.2f}, image {img_number}",
                             legend=["Found 2d points",
                                     "Projected 3d points"])
                     time.sleep(0.5)
@@ -279,4 +317,4 @@ if __name__ == "__main__":
 
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
-    df_fine.to_csv(folder + "fine_scores_3eps.csv", index=False)
+    df_fine.to_csv(folder + "fine_scores" + suffix + '.csv', index=False)
