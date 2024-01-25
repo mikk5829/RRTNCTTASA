@@ -174,7 +174,11 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
         return 1000000
 
     # calculate the weighted squared loss and return
-    weighted_squared_loss = np.sum(np.square(two_d_points - point2d_rotated).T * weights)
+
+    # weighted_squared_loss = np.sum(np.square(two_d_points - point2d_rotated).T * weights)
+    diff_l2 = np.linalg.norm(two_d_points - point2d_rotated, axis=1)
+    weighted_squared_loss = np.average(
+        (diff_l2) ** 2, axis=0, weights=weights)
 
     data.append([iteration, weighted_squared_loss])
     points.append([two_d_points, point2d_rotated])
@@ -187,7 +191,7 @@ if __name__ == "__main__":
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
-    suffix = "_linefit_eps4"
+    suffix = "_linefit_eps2"
     mat = scipy.io.loadmat(folder + "vertices" + suffix + ".mat")
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
@@ -195,6 +199,7 @@ if __name__ == "__main__":
     initial_guess[-3:] = 0
 
     fine_data = []
+    guess_data = []
 
     deg_roll_sma = 0
     deg_pitch_sma = 0
@@ -277,11 +282,16 @@ if __name__ == "__main__":
                 tries -= 1
                 trial_multiplier += 1.5  # increase trial multiplier to increase uncertainty
 
+        guess_data.append(
+            [img_number, roll, pitch, yaw, x, y, z, bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1],
+             bounds[2][0], bounds[2][1], bounds[3][0], bounds[3][1], bounds[4][0], bounds[4][1],
+             bounds[5][0], bounds[5][1]])
+
         fine_data.append([img_number, iteration, internal_loss, new_guess[0], new_guess[1], new_guess[2], new_guess[3],
                           new_guess[4],
                           new_guess[5]])
 
-        n_ma = 5  # number of points to use for moving average
+        n_ma = 10  # number of points to use for moving average
         if len(fine_data) > n_ma:
             # simple moving average
             mean_diff = np.mean(np.diff(np.array(fine_data[-n_ma:]), axis=0), axis=0)
@@ -318,3 +328,9 @@ if __name__ == "__main__":
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])
     df_fine.to_csv(folder + "fine_scores" + suffix + '.csv', index=False)
+
+    df_guess = pd.DataFrame(guess_data,
+                            columns=["img_number", "roll", "pitch", "yaw", "x", "y", "z", "roll_min", "roll_max",
+                                     "pitch_min", "pitch_max", "yaw_min", "yaw_max", "x_min", "x_max", "y_min",
+                                     "y_max", "z_min", "z_max"])
+    df_guess.to_csv(folder + "guesses" + suffix + '.csv', index=False)
