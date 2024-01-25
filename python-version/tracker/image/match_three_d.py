@@ -192,11 +192,16 @@ if __name__ == "__main__":
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
+    # remove last row
+    df_init = df_init[:-1]
     df_init = pd.concat([df_init, df_init], ignore_index=True)
     suffix = "_linefit_eps2"
     mat = scipy.io.loadmat(folder + "vertices" + suffix + ".mat")
-    # add mat to mat
+    # remove last row
+    mat['all_vertices'] = mat['all_vertices'][:-1]
+
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
+
     kappa = 2.3e-8
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
