@@ -118,7 +118,8 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     # world coordinates to image coordinates
     point2d_rotated = np.zeros((2, len(rotated_3d_points.T)))
     point2d_rotated[0] = rotated_3d_points[0] / (22 + rotated_3d_points[2]) * f / (8.6 * um)
-    point2d_rotated[1] = (rotated_3d_points[1] / (22 + rotated_3d_points[2])) * f / (8.6 * um)
+    point2d_rotated[1] = rotated_3d_points[1] / (22 + rotated_3d_points[2]) * f / (8.3 * um)
+
     point2d_rotated = point2d_rotated.T
 
     # matching 2d points with 3d points using KDTree
@@ -191,8 +192,12 @@ if __name__ == "__main__":
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
+    df_init = pd.concat([df_init, df_init], ignore_index=True)
     suffix = "_linefit_eps2"
     mat = scipy.io.loadmat(folder + "vertices" + suffix + ".mat")
+    # add mat to mat
+    mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
+    kappa = 2.3e-8
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
@@ -243,6 +248,9 @@ if __name__ == "__main__":
         image_points = image_points[:, :2]
 
         image_points[:, 0] += 104
+
+        image_points[:, 0] = image_points[:, 0] * 1 + (image_points[:, 0] ** 2 + image_points[:, 1] ** 2) * kappa
+        image_points[:, 1] = image_points[:, 1] * 1 + (image_points[:, 0] ** 2 + image_points[:, 1] ** 2) * kappa
 
         image_points -= size[1] // 2, size[0] // 2
 
