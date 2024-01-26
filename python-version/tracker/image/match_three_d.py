@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
-    kappa = -2.3e-8
+    kappa = 2.3e-8
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
@@ -267,7 +267,7 @@ if __name__ == "__main__":
         image_points[:, 1] *= (8.3 / 8.6)
 
         # if tries < 3:
-        #     plot_2d(image_points, title=f"original image {img_number}", labels=weights)
+        # plot_2d(image_points, title=f"original image {img_number}", labels=weights)
 
         roll, pitch, yaw, x, y, z = initial_guess
         roll += deg_roll_sma
