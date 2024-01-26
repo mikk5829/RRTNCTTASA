@@ -122,6 +122,12 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
     point2d_rotated = point2d_rotated.T
 
+    kappa = 2.3e-8
+    r = (point2d_rotated[:, 0] ** 2 + point2d_rotated[:, 1] ** 2)
+
+    point2d_rotated[:, 0] = point2d_rotated[:, 0] / (1 + kappa * r)
+    point2d_rotated[:, 1] = point2d_rotated[:, 1] / (1 + kappa * r)
+
     # matching 2d points with 3d points using KDTree
     tree = KDTree(point2d_rotated)
 
@@ -202,8 +208,6 @@ if __name__ == "__main__":
 
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
-    kappa = 2.3e-8
-
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     # set last 3 to 0 to remove translation
     initial_guess[-3:] = 0
@@ -259,12 +263,6 @@ if __name__ == "__main__":
         image_points[:, 0] += 104
 
         image_points -= principal_point
-
-        r = (image_points[:, 0] ** 2 + image_points[:, 1] ** 2)
-
-        image_points[:, 0] = image_points[:, 0] * (1 + kappa * r)
-        image_points[:, 1] = image_points[:, 1] * (1 + kappa * r)
-        image_points[:, 1] *= (8.3 / 8.6)
 
         # if tries < 3:
         # plot_2d(image_points, title=f"original image {img_number}", labels=weights)
