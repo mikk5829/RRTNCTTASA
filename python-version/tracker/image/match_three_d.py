@@ -229,7 +229,7 @@ if __name__ == "__main__":
     trans_y_std = 0.2
     trans_z_std = 0.2
 
-    trial_multiplier = 2  # high value means more uncertainty
+    trial_multiplier = 8  # high value means more uncertainty
 
     for img_number in tqdm(df_init.index):
         if (img_number == 0 or img_number % 9 == 0) and folder == "test_images/perfect_5degstep/":
@@ -298,7 +298,7 @@ if __name__ == "__main__":
                 break  # no more tries
             else:  # bad result
                 tries -= 1
-                trial_multiplier += 1.5  # increase trial multiplier to increase uncertainty
+                trial_multiplier += 1  # increase trial multiplier to increase uncertainty
 
         guess_data.append(
             [img_number, roll, pitch, yaw, x, y, z, bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1],
