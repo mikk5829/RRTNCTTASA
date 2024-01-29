@@ -47,7 +47,7 @@ class Tracker(IService):
         #     exit("No image path provided. Please provide one using the cli.")
         # Todo when estimations are present, use them to print the last pose
         # Find the object in the image
-        tracked_object = self.__object_service.get_object()
+        # tracked_object = self.__object_service.get_object()
 
         # self.contour_service.simplify_contours()
         self.__contour_service.get_best_match()

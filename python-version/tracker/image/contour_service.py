@@ -82,7 +82,8 @@ def get_translation(width, height, CoM, fs):
     f = 20 * mm
 
     # and a pixel size on the CCD of:
-    CCDy = 8.6 * um
+    CCDx = 8.6 * um
+    CCDy = 8.3 * um
 
     # What is the distance from the camera to the model in Blender?
     zm = 22 * m
@@ -92,7 +93,7 @@ def get_translation(width, height, CoM, fs):
 
     cx = math.floor(width / 2)
     cy = math.floor(height / 2)
-    px = ((CoM[0] - cx) * CCDy * z) / f
+    px = ((CoM[0] - cx) * CCDx * z) / f
     py = ((CoM[1] - cy) * CCDy * z) / f
 
     return Translation([px, py, z])

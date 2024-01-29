@@ -201,8 +201,8 @@ if __name__ == "__main__":
     # remove last row
     df_init = df_init[:-1]
     df_init = pd.concat([df_init, df_init], ignore_index=True)
-    suffix = "_linefit_eps2"
-    mat = scipy.io.loadmat(folder + "vertices" + suffix + ".mat")
+    suffix = "_eps2_final"
+    mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
     # remove last row
     mat['all_vertices'] = mat['all_vertices'][:-1]
 

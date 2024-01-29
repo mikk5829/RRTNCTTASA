@@ -115,7 +115,11 @@ class Object:
         # make a gaussian blur of the image to remove noise
         # blur_image = cv.GaussianBlur(self.__raw_image, (5, 5), 0)
         # median filter 5 x 5
-        blur_image = cv.medianBlur(self.__raw_image, 5)
+        # plot the raw image
+        blur_image = cv.medianBlur(self.__raw_image, 3)
+
+        # save blur image
+        # cv.imwrite(f"blurred_img.png", blur_image)
 
         # get x pixels evenly distributed from the image
         n = 50
@@ -136,7 +140,7 @@ class Object:
             sns.histplot(pixel_values, bins=int(256 / 4), color='#021226')
             plt.yscale('log')
             plt.title(f"Histogram of {n}*{n} evenly distributed pixel values")
-            plt.ylabel("log(count)")
+            plt.ylabel("Frequency (log scale)")
             plt.xlabel("Pixel value")
             plt.legend(["Background threshold", "Pixel values"])
             plt.show()
@@ -151,7 +155,14 @@ class Object:
 
         # plot the coordinates
         if self.__verbose:
+            # ofset the coordinates to the center of the image
             plt.plot(x, y, "r*")
+            plt.title(f"Coordinates of pixels above the background threshold")
+            # plt.xlabel("x")
+            # plt.ylabel("y")
+            plt.xticks([])
+            plt.yticks([])
+            plt.legend(["Coordinates"])
             plt.imshow(blur_image, cmap='gray')
             plt.show()
 
@@ -172,7 +183,7 @@ class Object:
         """
         This function is used to simplify the contours of the object
         """
-        epsilon = 0.002 * cv.arcLength(self.__contour, True)  # 0.25% of arc length
+        epsilon = 0.003 * cv.arcLength(self.__contour, True)  # 0.25% of arc length
         approx = cv.approxPolyDP(self.__contour, epsilon, True)
         self.__contour = approx
 
@@ -187,21 +198,34 @@ class Object:
                     np.any(np.isin(self.__satellite_points, contour.squeeze(), True).all(axis=1))]
 
         # plot contours
-        if self.__verbose:
-            plt.imshow(self.__threshold_image, cmap='gray')
-            # plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
-            for contour in contours:
-                plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
-            plt.show()
+        # if self.__verbose:
+        #     plt.imshow(self.__threshold_image, cmap='gray')
+        #     # plt.plot(self.__contour.squeeze()[:, 0], self.__contour.squeeze()[:, 1], "r")
+        #     for contour in contours:
+        #         plt.plot(contour.squeeze()[:, 0], contour.squeeze()[:, 1], "r")
+        #     plt.show()
 
         self.__contour = max(contours, key=cv.contourArea)
+
+        if self.__verbose:
+            # plt.imshow(self.__threshold_image, cmap='gray')
+            plt.title("CSC contour without simplification")
+            plot_contour(self.__contour, "r")
+            plt.xticks([])
+            plt.yticks([])
+            plt.legend(["Contour"])
+            plt.show()
 
         if simplify_contours:
             self.__simplify_contours()
 
-        if self.__verbose:
-            plt.imshow(self.__threshold_image, cmap='gray')
+        if self.__verbose and simplify_contours:
+            # plt.imshow(self.__threshold_image, cmap='gray')
+            plt.title("CSC contour with simplification")
             plot_contour(self.__contour, "r")
+            plt.xticks([])
+            plt.yticks([])
+            plt.legend(["Contour"])
             plt.show()
 
         # find bounding box coordinates and crop the image
