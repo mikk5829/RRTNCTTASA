@@ -209,9 +209,9 @@ if __name__ == "__main__":
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
-    initial_guess = [164.863986, -64.310508, -82.743138, 0, 0, 0]
+    # initial_guess = [164.863986, -64.310508, -82.743138, 0, 0, 0]
     # set last 3 to 0 to remove translation
-    # initial_guess[-3:] = 0
+    initial_guess[-3:] = 0
 
     fine_data = []
     guess_data = []
