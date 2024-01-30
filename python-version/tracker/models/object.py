@@ -207,14 +207,14 @@ class Object:
 
         self.__contour = max(contours, key=cv.contourArea)
 
-        if self.__verbose:
-            # plt.imshow(self.__threshold_image, cmap='gray')
-            plt.title("CSC contour without simplification")
-            plot_contour(self.__contour, "r")
-            plt.xticks([])
-            plt.yticks([])
-            plt.legend(["Contour"])
-            plt.show()
+        # if self.__verbose:
+        #     # plt.imshow(self.__threshold_image, cmap='gray')
+        #     plt.title("CSC contour without simplification")
+        #     plot_contour(self.__contour, "r")
+        #     plt.xticks([])
+        #     plt.yticks([])
+        #     plt.legend(["Contour"])
+        #     plt.show()
 
         if simplify_contours:
             self.__simplify_contours()
