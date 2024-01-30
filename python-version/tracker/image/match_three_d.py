@@ -201,7 +201,7 @@ if __name__ == "__main__":
     # remove last row
     df_init = df_init[:-1]
     df_init = pd.concat([df_init, df_init], ignore_index=True)
-    suffix = "_eps2_final"
+    suffix = "_eps2_final_strict"
     mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
     # remove last row
     mat['all_vertices'] = mat['all_vertices'][:-1]
@@ -209,8 +209,9 @@ if __name__ == "__main__":
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
+    initial_guess = [164.863986, -64.310508, -82.743138, 0, 0, 0]
     # set last 3 to 0 to remove translation
-    initial_guess[-3:] = 0
+    # initial_guess[-3:] = 0
 
     fine_data = []
     guess_data = []
@@ -225,9 +226,9 @@ if __name__ == "__main__":
     deg_roll_std = 8
     deg_pitch_std = 4
     deg_yaw_std = 4
-    trans_x_std = 0.2
-    trans_y_std = 0.2
-    trans_z_std = 0.2
+    trans_x_std = 0.1
+    trans_y_std = 0.1
+    trans_z_std = 0.1
 
     trial_multiplier = 8  # high value means more uncertainty
 
