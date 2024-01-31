@@ -59,14 +59,16 @@ def plot_2d(points, extra_points=None, title="", legend=None, labels=None):
 
 # points in meters around the center of mass
 three_d_points = np.array([
-    [-0.08, -2.30333333, 1.19666667],  # Top right solar panel
-    [-0.15666667, -0.84333333, 1.19666667],  # Top left solar panel
-    [-0.08, -2.30333333, -0.78333333],  # Bottom right solar panel
-    [-0.15666667, -0.84333333, -0.78333333],  # Bottom left solar panel
-    [-0.24333333, 1.03, -0.65333333],  # Bottom left satellite
+    [-0.08 - 0.1069, -2.30333333, 1.19666667],  # Top right solar panel
+    [-0.15666667 - 0.1069, -0.84333333, 1.19666667],  # Top left solar panel
+    [-0.08 - 0.1069, -2.30333333, -0.78333333],  # Bottom right solar panel
+    [-0.15666667 - 0.1069, -0.84333333, -0.78333333],  # Bottom left solar panel
+    [-0.24333333 - 0.1069, 1.03, -0.65333333],  # Bottom left satellite
     # [-0.24666667, 1.01333333, 0.69333333],  # Top left satellite
     # [0.7566, 1.03, -0.65333333],
 ])
+
+three_d_points -= [0.2799 - 0.1329 - 0.1785]
 
 data = []
 points = []
@@ -182,10 +184,9 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
     # calculate the weighted squared loss and return
 
-    # weighted_squared_loss = np.sum(np.square(two_d_points - point2d_rotated).T * weights)
     diff_l2 = np.linalg.norm(two_d_points - point2d_rotated, axis=1)
     weighted_squared_loss = np.average(
-        (diff_l2) ** 2, axis=0, weights=weights)
+        diff_l2 ** 2, axis=0, weights=weights)
 
     data.append([iteration, weighted_squared_loss])
     points.append([two_d_points, point2d_rotated])
@@ -209,7 +210,7 @@ if __name__ == "__main__":
     mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
-    initial_guess = [164.863986, -64.310508, -82.743138, 0, 0, 0]
+    initial_guess = [168.680000, -64.540000, -79.470000 - 0.1069, 0.4, 0.25, 0]
     # set last 3 to 0 to remove translation
     # initial_guess[-3:] = 0
 
