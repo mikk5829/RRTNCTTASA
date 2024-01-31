@@ -143,7 +143,7 @@ def calculate_roll(found_object: Object, tracked_object: Object):
         mult_sum[i] = np.dot(parametric_curve, np.roll(parametric_curve2, -i))
         # mult_sum_reverse[i] = np.dot(parametric_curve3, np.roll(parametric_curve2, -i))
         mult_sum_reverse[i] = np.dot(np.flip(parametric_curve), np.roll(parametric_curve2, -i))
-
+        
     # plt.plot(mult_sum, "b")
     # plt.plot(mult_sum_reverse, "r")
     # plt.show()

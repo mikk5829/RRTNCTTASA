@@ -1,4 +1,7 @@
+import cProfile
+import io
 import itertools
+import pstats
 import time
 import timeit
 
@@ -11,6 +14,17 @@ from scipy.optimize import minimize
 from scipy.spatial import KDTree
 import scipy.io
 from tqdm import tqdm
+
+
+def prof_to_csv(prof: cProfile.Profile):
+    out_stream = io.StringIO()
+    pstats.Stats(prof, stream=out_stream).strip_dirs().print_stats()
+    result = out_stream.getvalue()
+    # chop off header lines
+    result = 'ncalls' + result.split('ncalls')[-1]
+    lines = [','.join(line.rstrip().split(None, 5)) for line in result.split('\n')]
+    return '\n'.join(lines)
+
 
 labels = ["TR", "TL", "BR", "BL", "BLS", "TLS"]
 
@@ -68,7 +82,7 @@ three_d_points = np.array([
     # [0.7566, 1.03, -0.65333333],
 ])
 
-three_d_points -= [0.2799 - 0.1329 - 0.1785]
+# three_d_points -= [0.2799 - 0.1329 - 0.1785]
 
 data = []
 points = []
@@ -196,18 +210,20 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
 # main
 if __name__ == "__main__":
+    pr = cProfile.Profile()
+    pr.enable()
     folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
     # remove last row
     df_init = df_init[:-1]
-    df_init = pd.concat([df_init, df_init], ignore_index=True)
+    # df_init = pd.concat([df_init, df_init], ignore_index=True)
     suffix = "_eps2_final_strict"
     mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
     # remove last row
     mat['all_vertices'] = mat['all_vertices'][:-1]
 
-    mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
+    # mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     initial_guess = [168.680000, -64.540000, -79.470000 - 0.1069, 0.4, 0.25, 0]
@@ -332,7 +348,7 @@ if __name__ == "__main__":
 
         iteration = 0
 
-        if internal_loss > 50:
+        if False:
             for i, row in enumerate(points):
                 if i == len(points) - 1:
                     time.sleep(0.5)
@@ -344,6 +360,10 @@ if __name__ == "__main__":
 
     end_time = timeit.default_timer()
     print(f"Time: {end_time - start_time:.2f}s")
+    pr.disable()
+    csv = prof_to_csv(pr)
+    with open("prof_fine.csv", 'w+') as f:
+        f.write(csv)
 
     df_fine = pd.DataFrame(fine_data,
                            columns=["img_number", 'iterations', "loss", "roll", "pitch", "yaw", "x", "y", "z"])

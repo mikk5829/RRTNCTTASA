@@ -1,0 +1,11 @@
+ncalls,tottime,file_function
+2661120/1330560,0.1809041095890411,numeric.py:roll
+3878,0.1461917808219178,{imread}:internal
+3696,0.11878082191780821,contour_service.py:custom_uniform_interpolation
+1848,0.06213698630136986,contour_service.py:calculate_roll
+4938,0.05565753424657534,{built-in method builtins.sorted}:internal
+58400,0.051424657534246576,{matchShapes}:internal
+1,0.024260273972602737,{built-in method _pickle.load}:internal
+1332896,0.019506849315068492,numeric.py:normalize_axis_tuple
+1332504,0.010479452054794522,{method 'reshape' of 'numpy.ndarray' objects}:internal
+665280,0.009986301369863013,function_base.py:flip

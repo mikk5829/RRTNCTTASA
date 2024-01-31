@@ -1,3 +1,7 @@
+import cProfile
+import io
+import pstats
+
 from cli.parser import Parser
 from image.pose_map_service import PoseMapService
 from tracker import Tracker
@@ -40,5 +44,21 @@ def main():
     use_case()
 
 
+def prof_to_csv(prof: cProfile.Profile):
+    out_stream = io.StringIO()
+    pstats.Stats(prof, stream=out_stream).strip_dirs().print_stats()
+    result = out_stream.getvalue()
+    # chop off header lines
+    result = 'ncalls' + result.split('ncalls')[-1]
+    lines = [','.join(line.rstrip().split(None, 5)) for line in result.split('\n')]
+    return '\n'.join(lines)
+
+
 if __name__ == "__main__":
+    pr = cProfile.Profile()
+    pr.enable()
     main()
+    pr.disable()
+    csv = prof_to_csv(pr)
+    with open("prof.csv", 'w+') as f:
+        f.write(csv)
