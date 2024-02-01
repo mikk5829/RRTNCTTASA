@@ -217,13 +217,13 @@ if __name__ == "__main__":
     df_init = pd.read_csv(folder + "best_scores.csv")
     # remove last row
     df_init = df_init[:-1]
-    # df_init = pd.concat([df_init, df_init], ignore_index=True)
+    df_init = pd.concat([df_init, df_init], ignore_index=True)
     suffix = "_eps2_final_strict"
     mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
     # remove last row
     mat['all_vertices'] = mat['all_vertices'][:-1]
 
-    # mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
+    mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
     initial_guess = [168.680000, -64.540000, -79.470000 - 0.1069, 0.4, 0.25, 0]
