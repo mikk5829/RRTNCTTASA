@@ -158,11 +158,11 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 
     point2d_rotated = point2d_rotated.T
 
-    kappa = 2.3e-8
-    r = (point2d_rotated[:, 0] ** 2 + point2d_rotated[:, 1] ** 2)
-
-    point2d_rotated[:, 0] = point2d_rotated[:, 0] / (1 + kappa * r)
-    point2d_rotated[:, 1] = point2d_rotated[:, 1] / (1 + kappa * r)
+    # kappa = 2.3e-8
+    # r = (point2d_rotated[:, 0] ** 2 + point2d_rotated[:, 1] ** 2)
+    #
+    # point2d_rotated[:, 0] = point2d_rotated[:, 0] / (1 + kappa * r)
+    # point2d_rotated[:, 1] = point2d_rotated[:, 1] / (1 + kappa * r)
 
     # matching 2d points with 3d points using KDTree
     tree = KDTree(point2d_rotated)
@@ -189,17 +189,21 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     distances = np.linalg.norm(point2d_rotated[closest_points] - two_d_points, axis=1)
     closest_points = np.array(closest_points)
     # if closest_points has duplicates, remove them based on distances
+    to_delete = np.array([], dtype=int)
     u, c = np.unique(closest_points, return_counts=True)
     dup = u[c > 1]
-    to_delete = np.array([], dtype=int)
     for d in dup:
         # get all indices of d
         indices = np.where(closest_points == d)[0]
-        # remove the one with the highest distance
-        to_delete = indices[np.argmax(distances[indices])]
-        closest_points = np.delete(closest_points, to_delete)
-        two_d_points = np.delete(two_d_points, to_delete, axis=0)
+        # keep the one with the lowest  distance
+        to_keep = indices[np.argmin(distances[indices])]
+        to_delete = np.append(to_delete, indices[np.where(indices != to_keep)[0]])
 
+    # selecte the points that are not in to_delete
+    mask = np.full(len(closest_points), True, dtype=bool)
+    mask[to_delete] = False
+    closest_points = closest_points[mask]
+    two_d_points = two_d_points[mask]
     point2d_rotated = point2d_rotated[closest_points]
 
     # plot_2d(two_d_points, point2d_rotated,
@@ -244,16 +248,16 @@ if __name__ == "__main__":
     # remove last row
     # df_init = df_init[:-1]
     # df_init = pd.concat([df_init, df_init], ignore_index=True)
-    suffix = "_synthetic_noLineFit_unc"
+    suffix = "_synthetic"
     mat = scipy.io.loadmat(folder + "all_vertices" + suffix + ".mat")
     # remove last row
     # mat['all_vertices'] = mat['all_vertices'][:-1]
     # mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
-    # initial_guess = [168.68, -72.54, -82.47, 0, 0, 0]
+    initial_guess = [168.68, -72.54, -82.47, 0, 0, 0]
     # set last 3 to 0 to remove translation
-    initial_guess[-1:] -= 22
+    # initial_guess[-1:] -= 22
 
     fine_data = []
     guess_data = []
@@ -300,7 +304,7 @@ if __name__ == "__main__":
         # minus one in the y axis
         # image_points[:, 1] -= 0.54
 
-        image_points[:, 0] += 104
+        # image_points[:, 0] += 104
 
         image_points -= principal_point
 
