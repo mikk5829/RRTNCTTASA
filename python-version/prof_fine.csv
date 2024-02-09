@@ -9,7 +9,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 17,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:185(cb)
 27,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:166(_get_module_lock)
 10,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:203(_lock_unlock_module)
-27/7,0.000,0.000,0.023,0.003,<frozen importlib._bootstrap>:220(_call_with_frames_removed)
+27/7,0.000,0.000,0.021,0.003,<frozen importlib._bootstrap>:220(_call_with_frames_removed)
 388,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:231(_verbose_message)
 17,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:351(__init__)
 27,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:385(cached)
@@ -17,19 +17,19 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 16,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:406(has_location)
 75,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:64(_relax_case)
 16,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:486(_init_module_attrs)
-16,0.000,0.000,0.012,0.001,<frozen importlib._bootstrap>:558(module_from_spec)
-16/5,0.000,0.000,0.024,0.005,<frozen importlib._bootstrap>:659(_load_unlocked)
+16,0.000,0.000,0.011,0.001,<frozen importlib._bootstrap>:558(module_from_spec)
+16/5,0.000,0.000,0.021,0.004,<frozen importlib._bootstrap>:659(_load_unlocked)
 17,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:736(find_spec)
 17,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:811(find_spec)
 52,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:874(__enter__)
 52,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:878(__exit__)
 33,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:79(_unpack_uint32)
-17,0.000,0.000,0.003,0.000,<frozen importlib._bootstrap>:901(_find_spec)
+17,0.000,0.000,0.004,0.000,<frozen importlib._bootstrap>:901(_find_spec)
 1,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:948(_sanity_check)
-17/6,0.000,0.000,0.026,0.004,<frozen importlib._bootstrap>:967(_find_and_load_unlocked)
-17/6,0.000,0.000,0.026,0.004,<frozen importlib._bootstrap>:1002(_find_and_load)
+17/6,0.000,0.000,0.023,0.004,<frozen importlib._bootstrap>:967(_find_and_load_unlocked)
+17/6,0.000,0.000,0.023,0.004,<frozen importlib._bootstrap>:1002(_find_and_load)
 1,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap>:1018(_gcd_import)
-15/7,0.000,0.000,0.013,0.002,<frozen importlib._bootstrap>:1033(_handle_fromlist)
+15/7,0.000,0.000,0.011,0.002,<frozen importlib._bootstrap>:1033(_handle_fromlist)
 1,0.000,0.000,0.000,0.000,<frozen zipimport>:63(__init__)
 367,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:123(<listcomp>)
 367,0.000,0.000,0.001,0.000,<frozen importlib._bootstrap_external>:121(_path_join)
@@ -48,14 +48,14 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 11,0.000,0.000,0.001,0.000,<frozen importlib._bootstrap_external>:645(_compile_bytecode)
 16,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:696(spec_from_file_location)
 11,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:841(create_module)
-11/3,0.000,0.000,0.019,0.006,<frozen importlib._bootstrap_external>:844(exec_module)
-11,0.000,0.000,0.005,0.000,<frozen importlib._bootstrap_external>:916(get_code)
+11/3,0.000,0.000,0.017,0.006,<frozen importlib._bootstrap_external>:844(exec_module)
+11,0.000,0.000,0.003,0.000,<frozen importlib._bootstrap_external>:916(get_code)
 11,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1006(__init__)
 11,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1031(get_filename)
-11,0.000,0.000,0.004,0.000,<frozen importlib._bootstrap_external>:1036(get_data)
+11,0.000,0.000,0.001,0.000,<frozen importlib._bootstrap_external>:1036(get_data)
 11,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1077(path_stats)
 5,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1155(__init__)
-5,0.000,0.000,0.012,0.002,<frozen importlib._bootstrap_external>:1171(create_module)
+5,0.000,0.000,0.011,0.002,<frozen importlib._bootstrap_external>:1171(create_module)
 5,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1179(exec_module)
 1,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1324(_path_hooks)
 85,0.000,0.000,0.000,0.000,<frozen importlib._bootstrap_external>:1337(_path_importer_cache)
@@ -157,9 +157,9 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 14/1,0.000,0.000,0.000,0.000,sre_parse.py:435(_parse_sub)
 14/1,0.000,0.000,0.000,0.000,sre_parse.py:493(_parse)
 1,0.000,0.000,0.000,0.000,sre_parse.py:921(fix_flags)
-1,0.000,0.000,0.000,0.000,sre_parse.py:937(parse)
-142,0.001,0.000,58.810,0.414,match_three_d.py:101(match_three_d)
-65933,0.279,0.000,55.774,0.001,match_three_d.py:108(loss_minimize)
+1,0.000,0.000,0.001,0.001,sre_parse.py:937(parse)
+130,0.001,0.000,44.241,0.340,match_three_d.py:114(match_three_d)
+47691,0.200,0.000,41.995,0.001,match_three_d.py:121(loss_minimize)
 190,0.000,0.000,0.000,0.000,contextlib.py:86(__init__)
 190,0.000,0.000,0.001,0.000,contextlib.py:112(__enter__)
 190,0.000,0.000,0.001,0.000,contextlib.py:121(__exit__)
@@ -197,7 +197,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,threading.py:556(wait)
 1,0.000,0.000,0.000,0.000,threading.py:750(_newname)
 1,0.000,0.000,0.000,0.000,threading.py:795(__init__)
-1,0.000,0.000,0.001,0.001,threading.py:873(start)
+1,0.000,0.000,0.000,0.000,threading.py:873(start)
 1,0.000,0.000,0.000,0.000,threading.py:1127(daemon)
 1,0.000,0.000,0.000,0.000,threading.py:1142(daemon)
 1,0.000,0.000,0.000,0.000,threading.py:1209(_make_invoke_excepthook)
@@ -216,25 +216,25 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 4,0.000,0.000,0.000,0.000,signal.py:25(_int_to_enum)
 6,0.000,0.000,0.000,0.000,signal.py:61(<genexpr>)
 2,0.000,0.000,0.000,0.000,signal.py:58(pthread_sigmask)
-395598,0.078,0.000,0.078,0.000,{built-in method math.cos}
-395598,0.058,0.000,0.058,0.000,{built-in method math.sin}
+286146,0.056,0.000,0.056,0.000,{built-in method math.cos}
+286146,0.041,0.000,0.041,0.000,{built-in method math.sin}
 1,0.002,0.002,0.002,0.002,{built-in method _posixsubprocess.fork_exec}
 1,0.000,0.000,0.000,0.000,random.py:117(__init__)
 1,0.000,0.000,0.000,0.000,random.py:126(seed)
 8,0.000,0.000,0.000,0.000,random.py:237(_randbelow_with_getrandbits)
 8,0.000,0.000,0.000,0.000,random.py:343(choice)
-9419,0.002,0.000,0.002,0.000,multiarray.py:85(empty_like)
-152536,0.025,0.000,0.025,0.000,multiarray.py:153(concatenate)
-1,0.000,0.000,0.000,0.000,{function Random.seed at 0x10c5b7280}
-14,0.000,0.000,0.000,0.000,{method 'getrandbits' of '_random.Random' objects}
+6813,0.001,0.000,0.001,0.000,multiarray.py:85(empty_like)
+47704,0.009,0.000,0.009,0.000,multiarray.py:153(concatenate)
+1,0.000,0.000,0.000,0.000,{function Random.seed at 0x101dde280}
+17,0.000,0.000,0.000,0.000,{method 'getrandbits' of '_random.Random' objects}
 8,0.000,0.000,0.000,0.000,{method 'find' of 'bytearray' objects}
-143,0.000,0.000,0.000,0.000,{method 'decode' of 'bytes' objects}
-24105,0.011,0.000,0.011,0.000,{method 'startswith' of 'bytes' objects}
-285,0.000,0.000,0.000,0.000,{method 'strip' of 'bytes' objects}
+131,0.000,0.000,0.000,0.000,{method 'decode' of 'bytes' objects}
+19089,0.008,0.000,0.008,0.000,{method 'startswith' of 'bytes' objects}
+261,0.000,0.000,0.000,0.000,{method 'strip' of 'bytes' objects}
 63,0.000,0.000,0.000,0.000,{method 'get' of 'mappingproxy' objects}
 22,0.000,0.000,0.000,0.000,{method 'items' of 'mappingproxy' objects}
 6,0.000,0.000,0.000,0.000,{method 'setter' of 'property' objects}
-716332,0.124,0.000,0.124,0.000,{method 'append' of 'list' objects}
+527072,0.089,0.000,0.089,0.000,{method 'append' of 'list' objects}
 1,0.000,0.000,0.000,0.000,{method 'insert' of 'list' objects}
 4,0.000,0.000,0.000,0.000,{method 'extend' of 'list' objects}
 1,0.000,0.000,0.000,0.000,{method 'remove' of 'list' objects}
@@ -242,12 +242,12 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 4,0.000,0.000,0.000,0.000,{method 'sort' of 'list' objects}
 8,0.000,0.000,0.000,0.000,{method 'bit_length' of 'int' objects}
 33,0.000,0.000,0.000,0.000,{built-in method from_bytes}
-561,0.000,0.000,0.000,0.000,{method 'get' of 'dict' objects}
+525,0.000,0.000,0.000,0.000,{method 'get' of 'dict' objects}
 4,0.000,0.000,0.000,0.000,{method 'setdefault' of 'dict' objects}
 48,0.000,0.000,0.000,0.000,{method 'pop' of 'dict' objects}
 2,0.000,0.000,0.000,0.000,{method 'popitem' of 'dict' objects}
 76,0.000,0.000,0.000,0.000,{method 'keys' of 'dict' objects}
-934311,0.150,0.000,0.150,0.000,{method 'items' of 'dict' objects}
+692344,0.109,0.000,0.109,0.000,{method 'items' of 'dict' objects}
 2,0.000,0.000,0.000,0.000,{method 'values' of 'dict' objects}
 83,0.000,0.000,0.000,0.000,{method 'update' of 'dict' objects}
 74,0.000,0.000,0.000,0.000,{built-in method fromkeys}
@@ -259,13 +259,13 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 3,0.000,0.000,0.000,0.000,{method 'remove' of 'set' objects}
 4,0.000,0.000,0.000,0.000,{method '__contains__' of 'frozenset' objects}
 4,0.000,0.000,0.000,0.000,{method 'mro' of 'type' objects}
-266,0.000,0.000,0.000,0.000,{built-in method __new__ of type object at 0x10c8a3a38}
+254,0.000,0.000,0.000,0.000,{built-in method __new__ of type object at 0x1020caa38}
 5,0.000,0.000,0.000,0.000,{method 'encode' of 'str' objects}
 7,0.000,0.000,0.000,0.000,{method 'replace' of 'str' objects}
 5,0.000,0.000,0.000,0.000,{method 'split' of 'str' objects}
 394,0.000,0.000,0.000,0.000,{method 'join' of 'str' objects}
 1,0.000,0.000,0.000,0.000,{method 'find' of 'str' objects}
-174,0.000,0.000,0.000,0.000,{method 'lower' of 'str' objects}
+162,0.000,0.000,0.000,0.000,{method 'lower' of 'str' objects}
 22,0.000,0.000,0.000,0.000,{method 'lstrip' of 'str' objects}
 22,0.000,0.000,0.000,0.000,{method 'rfind' of 'str' objects}
 756,0.000,0.000,0.000,0.000,{method 'rstrip' of 'str' objects}
@@ -275,35 +275,35 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 30,0.000,0.000,0.000,0.000,{method 'endswith' of 'str' objects}
 950,0.000,0.000,0.000,0.000,{method 'isupper' of 'str' objects}
 7,0.000,0.000,0.000,0.000,{method 'isidentifier' of 'str' objects}
-534,0.001,0.000,0.002,0.000,{method 'format' of 'str' objects}
+534,0.001,0.000,0.001,0.000,{method 'format' of 'str' objects}
 3,0.000,0.000,0.000,0.000,{built-in method _warnings._filters_mutated}
 40,0.001,0.000,0.001,0.000,{built-in method builtins.__build_class__}
-6/3,0.000,0.000,0.013,0.004,{built-in method builtins.__import__}
-9496,0.003,0.000,0.003,0.000,{built-in method builtins.abs}
-302/301,0.000,0.000,0.001,0.000,{built-in method builtins.all}
-1146,0.001,0.000,0.001,0.000,{built-in method builtins.any}
-1212,0.000,0.000,0.000,0.000,{built-in method builtins.callable}
+6/3,0.000,0.000,0.011,0.004,{built-in method builtins.__import__}
+6890,0.002,0.000,0.002,0.000,{built-in method builtins.abs}
+290/289,0.000,0.000,0.001,0.000,{built-in method builtins.all}
+1062,0.001,0.000,0.001,0.000,{built-in method builtins.any}
+1116,0.000,0.000,0.000,0.000,{built-in method builtins.callable}
 4,0.000,0.000,0.000,0.000,{built-in method builtins.dir}
 373,0.000,0.000,0.000,0.000,{built-in method builtins.divmod}
 1,0.000,0.000,0.000,0.000,{built-in method builtins.eval}
-11/3,0.000,0.000,0.018,0.006,{built-in method builtins.exec}
-3088484,0.563,0.000,0.563,0.000,{built-in method builtins.getattr}
+11/3,0.000,0.000,0.016,0.005,{built-in method builtins.exec}
+2307185,0.407,0.000,0.407,0.000,{built-in method builtins.getattr}
 2,0.000,0.000,0.000,0.000,{built-in method builtins.globals}
-66386,0.027,0.000,0.027,0.000,{built-in method builtins.hasattr}
+48144,0.020,0.000,0.020,0.000,{built-in method builtins.hasattr}
 11,0.000,0.000,0.000,0.000,{built-in method builtins.hash}
 3,0.000,0.000,0.000,0.000,{built-in method builtins.id}
-1868544/1868543,0.439,0.000,0.440,0.000,{built-in method builtins.isinstance}
-395943,0.084,0.000,0.084,0.000,{built-in method builtins.issubclass}
-995,0.000,0.000,0.000,0.000,{built-in method builtins.iter}
-624196/623923,0.114,0.000,0.114,0.000,{built-in method builtins.len}
+1742442/1742441,0.409,0.000,0.410,0.000,{built-in method builtins.isinstance}
+286491,0.066,0.000,0.066,0.000,{built-in method builtins.issubclass}
+911,0.000,0.000,0.000,0.000,{built-in method builtins.iter}
+404413/404140,0.076,0.000,0.077,0.000,{built-in method builtins.len}
 1,0.000,0.000,0.000,0.000,{built-in method builtins.locals}
 97,0.000,0.000,0.000,0.000,{built-in method builtins.max}
-180,0.001,0.000,0.001,0.000,{built-in method builtins.min}
+168,0.001,0.000,0.001,0.000,{built-in method builtins.min}
 384,0.000,0.000,0.001,0.000,{built-in method builtins.next}
 1579,0.000,0.000,0.000,0.000,{built-in method builtins.ord}
 1,0.000,0.000,0.000,0.000,{built-in method builtins.print}
 51,0.000,0.000,0.000,0.000,{built-in method builtins.setattr}
-65937,0.278,0.000,0.278,0.000,{built-in method builtins.sorted}
+47695,0.206,0.000,0.206,0.000,{built-in method builtins.sorted}
 75,0.000,0.000,0.002,0.000,{built-in method builtins.sum}
 4,0.000,0.000,0.000,0.000,{built-in method builtins.vars}
 189,0.000,0.000,0.000,0.000,{method 'set' of 'ContextVar' objects}
@@ -312,7 +312,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 96,0.000,0.000,0.000,0.000,{built-in method _imp.release_lock}
 10,0.000,0.000,0.000,0.000,{built-in method _imp.is_builtin}
 17,0.000,0.000,0.000,0.000,{built-in method _imp.is_frozen}
-5,0.012,0.002,0.012,0.002,{built-in method _imp.create_dynamic}
+5,0.011,0.002,0.011,0.002,{built-in method _imp.create_dynamic}
 5,0.000,0.000,0.000,0.000,{built-in method _imp.exec_dynamic}
 11,0.000,0.000,0.000,0.000,{built-in method _imp._fix_co_filename}
 11,0.001,0.000,0.001,0.000,{built-in method marshal.loads}
@@ -320,7 +320,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,{built-in method sys.getfilesystemencoding}
 1,0.000,0.000,0.000,0.000,{built-in method sys._getframe}
 4,0.000,0.000,0.000,0.000,{built-in method sys.intern}
-107,0.001,0.000,0.001,0.000,{built-in method posix.stat}
+107,0.002,0.000,0.002,0.000,{built-in method posix.stat}
 1,0.000,0.000,0.000,0.000,{built-in method posix.getcwd}
 1,0.000,0.000,0.000,0.000,{built-in method posix.listdir}
 2,0.000,0.000,0.000,0.000,{built-in method posix.getpid}
@@ -337,7 +337,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 3,0.000,0.000,0.000,0.000,{built-in method _codecs.utf_8_decode}
 1,0.000,0.000,0.000,0.000,{built-in method _codecs.lookup_error}
 2,0.000,0.000,0.000,0.000,{built-in method _weakref.proxy}
-284,0.000,0.000,0.000,0.000,{built-in method _operator.index}
+260,0.000,0.000,0.000,0.000,{built-in method _operator.index}
 1,0.000,0.000,0.000,0.000,{method 'append' of 'collections.deque' objects}
 2,0.000,0.000,0.000,0.000,{built-in method _abc._abc_init}
 9,0.000,0.000,0.000,0.000,{built-in method _abc._abc_instancecheck}
@@ -357,10 +357,10 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 38,0.000,0.000,0.000,0.000,{built-in method _thread.allocate_lock}
 55,0.000,0.000,0.000,0.000,{built-in method _thread.get_ident}
 2,0.000,0.000,0.000,0.000,{built-in method io.open}
-11,0.001,0.000,0.001,0.000,{built-in method io.open_code}
+11,0.000,0.000,0.000,0.000,{built-in method io.open_code}
 11,0.000,0.000,0.000,0.000,{method '__exit__' of '_io._IOBase' objects}
 1,0.000,0.000,0.000,0.000,{method 'close' of '_io.BufferedReader' objects}
-17,0.003,0.000,0.003,0.000,{method 'read' of '_io.BufferedReader' objects}
+17,0.000,0.000,0.000,0.000,{method 'read' of '_io.BufferedReader' objects}
 9,0.000,0.000,0.000,0.000,{method 'seek' of '_io.BufferedReader' objects}
 3,0.000,0.000,0.000,0.000,{method 'tell' of '_io.BufferedReader' objects}
 77,0.001,0.000,0.001,0.000,{method 'write' of '_io.TextIOWrapper' objects}
@@ -369,137 +369,137 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,{method 'fileno' of '_io.TextIOWrapper' objects}
 74,0.000,0.000,0.000,0.000,{built-in method now}
 1,0.000,0.000,0.000,0.000,{built-in method utcfromtimestamp}
-182599,0.033,0.000,0.033,0.000,multiarray.py:346(where)
-66007,0.009,0.000,0.009,0.000,multiarray.py:669(result_type)
-65933,0.017,0.000,0.017,0.000,multiarray.py:741(dot)
-75359,0.014,0.000,0.014,0.000,multiarray.py:1080(copyto)
+76596,0.016,0.000,0.016,0.000,multiarray.py:346(where)
+47765,0.008,0.000,0.008,0.000,multiarray.py:669(result_type)
+47691,0.012,0.000,0.012,0.000,multiarray.py:741(dot)
+6820,0.002,0.000,0.002,0.000,multiarray.py:1080(copyto)
 12,0.000,0.000,0.000,0.000,numerictypes.py:283(issubclass_)
 6,0.000,0.000,0.000,0.000,numerictypes.py:357(issubdtype)
 5,0.000,0.000,0.000,0.000,_dtype.py:24(_kind_name)
 5,0.000,0.000,0.000,0.000,_dtype.py:330(_name_includes_bit_suffix)
 5,0.000,0.000,0.000,0.000,_dtype.py:346(_name_get)
-9419,0.002,0.000,0.002,0.000,numeric.py:199(_ones_like_dispatcher)
-9419,0.051,0.000,0.054,0.000,numeric.py:203(ones_like)
-65940,0.243,0.000,0.302,0.000,numeric.py:274(full)
-783132,0.382,0.000,0.610,0.000,numeric.py:1855(isscalar)
-9487,0.002,0.000,0.002,0.000,numeric.py:2374(_array_equal_dispatcher)
-9487,0.036,0.000,0.085,0.000,numeric.py:2378(array_equal)
-85339,0.012,0.000,0.012,0.000,shape_base.py:19(_atleast_1d_dispatcher)
-85339,0.154,0.000,0.311,0.000,shape_base.py:23(atleast_1d)
-144,0.000,0.000,0.000,0.000,shape_base.py:77(_atleast_2d_dispatcher)
-144,0.000,0.000,0.000,0.000,shape_base.py:81(atleast_2d)
+6813,0.001,0.000,0.001,0.000,numeric.py:199(_ones_like_dispatcher)
+6813,0.041,0.000,0.044,0.000,numeric.py:203(ones_like)
+7,0.000,0.000,0.000,0.000,numeric.py:274(full)
+582897,0.292,0.000,0.470,0.000,numeric.py:1855(isscalar)
+6821,0.002,0.000,0.002,0.000,numeric.py:2374(_array_equal_dispatcher)
+6821,0.027,0.000,0.064,0.000,numeric.py:2378(array_equal)
+61837,0.009,0.000,0.009,0.000,shape_base.py:19(_atleast_1d_dispatcher)
+61837,0.113,0.000,0.225,0.000,shape_base.py:23(atleast_1d)
+132,0.000,0.000,0.000,0.000,shape_base.py:77(_atleast_2d_dispatcher)
+132,0.000,0.000,0.000,0.000,shape_base.py:81(atleast_2d)
 2,0.000,0.000,0.000,0.000,shape_base.py:207(_arrays_for_stack_dispatcher)
 2,0.000,0.000,0.000,0.000,shape_base.py:215(_vhstack_dispatcher)
 2,0.000,0.000,0.000,0.000,shape_base.py:219(vstack)
-1434398,2.188,0.000,4.973,0.000,fromnumeric.py:40(_wrapit)
-1587065,1.683,0.000,7.080,0.000,fromnumeric.py:53(_wrapfunc)
-934262,0.503,0.000,0.503,0.000,fromnumeric.py:72(<dictcomp>)
-934262,1.636,0.000,5.469,0.000,fromnumeric.py:71(_wrapreduction)
-1434398,0.221,0.000,0.221,0.000,fromnumeric.py:195(_reshape_dispatcher)
-1434398,0.747,0.000,7.481,0.000,fromnumeric.py:200(reshape)
+1070412,1.691,0.000,3.749,0.000,fromnumeric.py:40(_wrapit)
+1188018,1.267,0.000,5.342,0.000,fromnumeric.py:53(_wrapfunc)
+692295,0.377,0.000,0.377,0.000,fromnumeric.py:72(<dictcomp>)
+692295,1.198,0.000,4.111,0.000,fromnumeric.py:71(_wrapreduction)
+1070412,0.158,0.000,0.158,0.000,fromnumeric.py:195(_reshape_dispatcher)
+1070412,0.556,0.000,5.640,0.000,fromnumeric.py:200(reshape)
 2,0.000,0.000,0.000,0.000,fromnumeric.py:1021(_argsort_dispatcher)
 2,0.000,0.000,0.000,0.000,fromnumeric.py:1025(argsort)
-86590,0.013,0.000,0.013,0.000,fromnumeric.py:1232(_argmin_dispatcher)
-86590,0.128,0.000,0.320,0.000,fromnumeric.py:1236(argmin)
-96009,0.014,0.000,0.014,0.000,fromnumeric.py:1764(_ravel_dispatcher)
-96009,0.102,0.000,0.189,0.000,fromnumeric.py:1768(ravel)
-65933,0.011,0.000,0.011,0.000,fromnumeric.py:1877(_nonzero_dispatcher)
-65933,0.044,0.000,0.197,0.000,fromnumeric.py:1881(nonzero)
-717199,0.125,0.000,0.125,0.000,fromnumeric.py:1976(_shape_dispatcher)
-717199,0.232,0.000,0.232,0.000,fromnumeric.py:1980(shape)
-142,0.000,0.000,0.000,0.000,fromnumeric.py:2096(_clip_dispatcher)
-142,0.000,0.000,0.001,0.000,fromnumeric.py:2100(clip)
-75636,0.015,0.000,0.015,0.000,fromnumeric.py:2317(_any_dispatcher)
-75636,0.096,0.000,0.770,0.000,fromnumeric.py:2322(any)
-9561,0.002,0.000,0.002,0.000,fromnumeric.py:2416(_all_dispatcher)
-9561,0.012,0.000,0.063,0.000,fromnumeric.py:2421(all)
-783132,0.124,0.000,0.124,0.000,fromnumeric.py:2687(_max_dispatcher)
-717199,0.762,0.000,4.694,0.000,fromnumeric.py:2692(max)
-65933,0.093,0.000,0.570,0.000,fromnumeric.py:2814(amax)
-65933,0.014,0.000,0.014,0.000,fromnumeric.py:2831(_min_dispatcher)
-65933,0.072,0.000,0.405,0.000,fromnumeric.py:2957(amin)
-284,0.000,0.000,0.000,0.000,fromnumeric.py:3172(_ndim_dispatcher)
-284,0.001,0.000,0.001,0.000,fromnumeric.py:3176(ndim)
-65996,0.013,0.000,0.013,0.000,fromnumeric.py:3380(_mean_dispatcher)
-65996,0.154,0.000,1.024,0.000,fromnumeric.py:3385(mean)
+69783,0.011,0.000,0.011,0.000,fromnumeric.py:1136(_argmax_dispatcher)
+69783,0.104,0.000,0.262,0.000,fromnumeric.py:1140(argmax)
+6813,0.002,0.000,0.002,0.000,fromnumeric.py:1764(_ravel_dispatcher)
+6813,0.011,0.000,0.018,0.000,fromnumeric.py:1768(ravel)
+47691,0.008,0.000,0.008,0.000,fromnumeric.py:1877(_nonzero_dispatcher)
+47691,0.030,0.000,0.129,0.000,fromnumeric.py:1881(nonzero)
+535206,0.090,0.000,0.090,0.000,fromnumeric.py:1976(_shape_dispatcher)
+535206,0.182,0.000,0.182,0.000,fromnumeric.py:1980(shape)
+130,0.000,0.000,0.000,0.000,fromnumeric.py:2096(_clip_dispatcher)
+130,0.000,0.000,0.001,0.000,fromnumeric.py:2100(clip)
+54764,0.012,0.000,0.012,0.000,fromnumeric.py:2317(_any_dispatcher)
+54764,0.072,0.000,0.570,0.000,fromnumeric.py:2322(any)
+6943,0.001,0.000,0.001,0.000,fromnumeric.py:2416(_all_dispatcher)
+6943,0.010,0.000,0.048,0.000,fromnumeric.py:2421(all)
+582897,0.094,0.000,0.094,0.000,fromnumeric.py:2687(_max_dispatcher)
+535206,0.579,0.000,3.559,0.000,fromnumeric.py:2692(max)
+47691,0.067,0.000,0.418,0.000,fromnumeric.py:2814(amax)
+47691,0.010,0.000,0.010,0.000,fromnumeric.py:2831(_min_dispatcher)
+47691,0.051,0.000,0.295,0.000,fromnumeric.py:2957(amin)
+260,0.000,0.000,0.000,0.000,fromnumeric.py:3172(_ndim_dispatcher)
+260,0.001,0.000,0.001,0.000,fromnumeric.py:3176(ndim)
+47754,0.010,0.000,0.010,0.000,fromnumeric.py:3380(_mean_dispatcher)
+47754,0.103,0.000,0.745,0.000,fromnumeric.py:3385(mean)
 63,0.000,0.000,0.000,0.000,fromnumeric.py:3508(_std_dispatcher)
 63,0.000,0.000,0.004,0.000,fromnumeric.py:3513(std)
-131866,0.050,0.000,0.410,0.000,_methods.py:47(_sum)
-66218,0.031,0.000,0.242,0.000,_methods.py:55(_any)
-792619,0.320,0.000,2.986,0.000,_methods.py:61(_all)
-66059,0.257,0.000,0.277,0.000,_methods.py:67(_count_reduce_items)
-142,0.001,0.000,0.001,0.000,_methods.py:90(_clip)
-65996,0.299,0.000,0.870,0.000,_methods.py:101(_mean)
+95382,0.036,0.000,0.307,0.000,_methods.py:47(_sum)
+47952,0.021,0.000,0.187,0.000,_methods.py:55(_any)
+589718,0.244,0.000,2.319,0.000,_methods.py:61(_all)
+47817,0.191,0.000,0.203,0.000,_methods.py:67(_count_reduce_items)
+130,0.000,0.000,0.000,0.000,_methods.py:90(_clip)
+47754,0.213,0.000,0.642,0.000,_methods.py:101(_mean)
 63,0.002,0.000,0.003,0.000,_methods.py:135(_var)
 63,0.000,0.000,0.004,0.000,_methods.py:204(_std)
 378,0.000,0.000,0.001,0.000,_ufunc_config.py:452(_no_nep50_warning)
 5,0.000,0.000,0.000,0.000,_asarray.py:108(<setcomp>)
 5,0.000,0.000,0.000,0.000,_asarray.py:27(require)
-144,0.000,0.000,0.000,0.000,getlimits.py:484(__new__)
-710,0.000,0.000,0.000,0.000,einsumfunc.py:1001(_einsum_dispatcher)
-142,0.000,0.000,0.001,0.000,einsumfunc.py:1009(einsum)
-197799,0.037,0.000,0.037,0.000,linalg.py:2379(_norm_dispatcher)
-197799,1.050,0.000,2.119,0.000,linalg.py:2383(norm)
-9419,0.002,0.000,0.002,0.000,twodim_base.py:230(_diag_dispatcher)
-9419,0.049,0.000,0.063,0.000,twodim_base.py:234(diag)
+132,0.000,0.000,0.000,0.000,getlimits.py:484(__new__)
+650,0.000,0.000,0.000,0.000,einsumfunc.py:1001(_einsum_dispatcher)
+130,0.000,0.000,0.001,0.000,einsumfunc.py:1009(einsum)
+143073,0.029,0.000,0.029,0.000,linalg.py:2379(_norm_dispatcher)
+143073,0.758,0.000,1.576,0.000,linalg.py:2383(norm)
+6813,0.001,0.000,0.001,0.000,twodim_base.py:230(_diag_dispatcher)
+6813,0.036,0.000,0.047,0.000,twodim_base.py:234(diag)
 31,0.000,0.000,0.000,0.000,typing.py:1340(cast)
-994,0.000,0.000,0.000,0.000,stride_tricks.py:25(_maybe_view_as_subclass)
-1988,0.000,0.000,0.000,0.000,stride_tricks.py:345(<genexpr>)
-994,0.007,0.000,0.010,0.000,stride_tricks.py:340(_broadcast_to)
-568,0.000,0.000,0.000,0.000,stride_tricks.py:363(_broadcast_to_dispatcher)
-568,0.000,0.000,0.005,0.000,stride_tricks.py:367(broadcast_to)
-142,0.001,0.000,0.001,0.000,stride_tricks.py:416(_broadcast_shape)
-142,0.000,0.000,0.000,0.000,stride_tricks.py:476(_broadcast_arrays_dispatcher)
-142,0.000,0.000,0.000,0.000,stride_tricks.py:538(<listcomp>)
-568,0.000,0.000,0.000,0.000,stride_tricks.py:542(<genexpr>)
-142,0.000,0.000,0.006,0.000,stride_tricks.py:546(<listcomp>)
-142,0.001,0.000,0.008,0.000,stride_tricks.py:480(broadcast_arrays)
-994,0.001,0.000,0.001,0.000,function_base.py:348(iterable)
-65933,0.013,0.000,0.013,0.000,function_base.py:393(_average_dispatcher)
-65933,0.755,0.000,2.024,0.000,function_base.py:398(average)
-197941,0.035,0.000,0.035,0.000,function_base.py:869(_copy_dispatcher)
-197941,0.072,0.000,0.259,0.000,function_base.py:873(copy)
-66059,0.015,0.000,0.015,0.000,function_base.py:1320(_diff_dispatcher)
-66059,0.496,0.000,0.552,0.000,function_base.py:1324(diff)
-86590,0.015,0.000,0.015,0.000,function_base.py:5558(_append_dispatcher)
-86590,0.324,0.000,0.530,0.000,function_base.py:5562(append)
-65933,0.028,0.000,0.037,0.000,arraysetops.py:125(_unpack_tuple)
-65933,0.015,0.000,0.015,0.000,arraysetops.py:133(_unique_dispatcher)
-65933,0.118,0.000,2.235,0.000,arraysetops.py:138(unique)
-65933,1.069,0.000,2.069,0.000,arraysetops.py:323(_unique1d)
+910,0.000,0.000,0.000,0.000,stride_tricks.py:25(_maybe_view_as_subclass)
+1820,0.000,0.000,0.000,0.000,stride_tricks.py:345(<genexpr>)
+910,0.006,0.000,0.009,0.000,stride_tricks.py:340(_broadcast_to)
+520,0.000,0.000,0.000,0.000,stride_tricks.py:363(_broadcast_to_dispatcher)
+520,0.000,0.000,0.004,0.000,stride_tricks.py:367(broadcast_to)
+130,0.001,0.000,0.001,0.000,stride_tricks.py:416(_broadcast_shape)
+130,0.000,0.000,0.000,0.000,stride_tricks.py:476(_broadcast_arrays_dispatcher)
+130,0.000,0.000,0.000,0.000,stride_tricks.py:538(<listcomp>)
+520,0.000,0.000,0.000,0.000,stride_tricks.py:542(<genexpr>)
+130,0.000,0.000,0.005,0.000,stride_tricks.py:546(<listcomp>)
+130,0.001,0.000,0.007,0.000,stride_tricks.py:480(broadcast_arrays)
+910,0.001,0.000,0.001,0.000,function_base.py:348(iterable)
+47691,0.010,0.000,0.010,0.000,function_base.py:393(_average_dispatcher)
+47691,0.538,0.000,1.477,0.000,function_base.py:398(average)
+143203,0.026,0.000,0.026,0.000,function_base.py:869(_copy_dispatcher)
+143203,0.053,0.000,0.187,0.000,function_base.py:873(copy)
+47817,0.012,0.000,0.012,0.000,function_base.py:1320(_diff_dispatcher)
+47817,0.342,0.000,0.382,0.000,function_base.py:1324(diff)
+139566,0.020,0.000,0.020,0.000,function_base.py:5168(_delete_dispatcher)
+139566,0.911,0.000,1.110,0.000,function_base.py:5172(delete)
+47691,0.020,0.000,0.027,0.000,arraysetops.py:125(_unpack_tuple)
+47691,0.009,0.000,0.009,0.000,arraysetops.py:133(_unique_dispatcher)
+47691,0.083,0.000,1.590,0.000,arraysetops.py:138(unique)
+47691,0.778,0.000,1.472,0.000,arraysetops.py:323(_unique1d)
 1,0.000,0.000,0.000,0.000,{method 'disable' of '_lsprof.Profiler' objects}
-9487,0.008,0.000,0.045,0.000,{method 'all' of 'numpy.ndarray' objects}
-285,0.000,0.000,0.001,0.000,{method 'any' of 'numpy.ndarray' objects}
-86590,0.094,0.000,0.094,0.000,{method 'argmin' of 'numpy.ndarray' objects}
-65935,0.146,0.000,0.146,0.000,{method 'argsort' of 'numpy.ndarray' objects}
-35705,0.042,0.000,0.042,0.000,{method 'astype' of 'numpy.ndarray' objects}
-142,0.000,0.000,0.001,0.000,{method 'clip' of 'numpy.ndarray' objects}
-197799,0.076,0.000,0.076,0.000,{method 'conj' of 'numpy.ndarray' objects}
-9419,0.009,0.000,0.009,0.000,{method 'copy' of 'numpy.ndarray' objects}
-65933,0.066,0.000,0.066,0.000,{method 'flatten' of 'numpy.ndarray' objects}
+6821,0.005,0.000,0.035,0.000,{method 'all' of 'numpy.ndarray' objects}
+261,0.000,0.000,0.001,0.000,{method 'any' of 'numpy.ndarray' objects}
+69783,0.080,0.000,0.080,0.000,{method 'argmax' of 'numpy.ndarray' objects}
+47693,0.109,0.000,0.109,0.000,{method 'argsort' of 'numpy.ndarray' objects}
+26646,0.031,0.000,0.031,0.000,{method 'astype' of 'numpy.ndarray' objects}
+130,0.000,0.000,0.001,0.000,{method 'clip' of 'numpy.ndarray' objects}
+143073,0.056,0.000,0.056,0.000,{method 'conj' of 'numpy.ndarray' objects}
+6813,0.007,0.000,0.007,0.000,{method 'copy' of 'numpy.ndarray' objects}
+47691,0.051,0.000,0.051,0.000,{method 'flatten' of 'numpy.ndarray' objects}
 1,0.000,0.000,0.000,0.000,{method 'item' of 'numpy.ndarray' objects}
-65933,0.060,0.000,0.060,0.000,{method 'nonzero' of 'numpy.ndarray' objects}
-96151,0.052,0.000,0.052,0.000,{method 'ravel' of 'numpy.ndarray' objects}
-1500899,1.333,0.000,1.333,0.000,{method 'reshape' of 'numpy.ndarray' objects}
-65933,0.088,0.000,0.088,0.000,{method 'sort' of 'numpy.ndarray' objects}
-131866,0.104,0.000,0.513,0.000,{method 'sum' of 'numpy.ndarray' objects}
-16867,0.009,0.000,0.009,0.000,{method 'tobytes' of 'numpy.ndarray' objects}
-661875,0.996,0.000,0.996,0.000,{built-in method numpy.array}
-2463347,1.431,0.000,1.431,0.000,{built-in method numpy.asarray}
-673416,0.136,0.000,0.136,0.000,{built-in method numpy.asanyarray}
-76914,0.060,0.000,0.060,0.000,{built-in method numpy.zeros}
-141375,0.108,0.000,0.108,0.000,{built-in method numpy.empty}
-142,0.001,0.000,0.001,0.000,{built-in method numpy.core._multiarray_umath.c_einsum}
-132118,0.042,0.000,0.042,0.000,{built-in method numpy.core._multiarray_umath.normalize_axis_index}
-994,0.000,0.000,0.000,0.000,{method '__exit__' of 'numpy.nditer' objects}
-65933,0.153,0.000,0.395,0.000,{method 'any' of 'numpy.generic' objects}
-2122953,7.047,0.000,7.047,0.000,{method 'reduce' of 'numpy.ufunc' objects}
+47691,0.040,0.000,0.040,0.000,{method 'nonzero' of 'numpy.ndarray' objects}
+6943,0.005,0.000,0.005,0.000,{method 'ravel' of 'numpy.ndarray' objects}
+1118623,1.013,0.000,1.013,0.000,{method 'reshape' of 'numpy.ndarray' objects}
+47691,0.064,0.000,0.064,0.000,{method 'sort' of 'numpy.ndarray' objects}
+95382,0.071,0.000,0.378,0.000,{method 'sum' of 'numpy.ndarray' objects}
+13020,0.007,0.000,0.007,0.000,{method 'tobytes' of 'numpy.ndarray' objects}
+479251,0.729,0.000,0.729,0.000,{built-in method numpy.array}
+1970696,1.061,0.000,1.061,0.000,{built-in method numpy.asarray}
+362058,0.082,0.000,0.082,0.000,{built-in method numpy.asanyarray}
+55934,0.041,0.000,0.041,0.000,{built-in method numpy.zeros}
+194160,0.123,0.000,0.123,0.000,{built-in method numpy.empty}
+130,0.001,0.000,0.001,0.000,{built-in method numpy.core._multiarray_umath.c_einsum}
+165417,0.043,0.000,0.043,0.000,{built-in method numpy.core._multiarray_umath.normalize_axis_index}
+910,0.000,0.000,0.000,0.000,{method '__exit__' of 'numpy.nditer' objects}
+47691,0.111,0.000,0.298,0.000,{method 'any' of 'numpy.generic' objects}
+1568609,5.433,0.000,5.433,0.000,{method 'reduce' of 'numpy.ufunc' objects}
 1,0.000,0.000,0.000,0.000,copy.py:66(copy)
 1,0.000,0.000,0.000,0.000,copy.py:107(_copy_immutable)
-65933,9.834,0.000,55.496,0.001,match_three_d.py:113(loss)
-3507,0.001,0.000,0.001,0.000,{built-in method unicodedata.east_asian_width}
+47691,7.078,0.000,41.796,0.001,match_three_d.py:126(loss)
+3507,0.000,0.000,0.000,0.000,{built-in method unicodedata.east_asian_width}
 1,0.000,0.000,0.000,0.000,six.py:194(find_spec)
-73,0.367,0.005,0.367,0.005,{imread}
+73,0.191,0.003,0.191,0.003,{imread}
 75,0.000,0.000,0.000,0.000,__init__.py:33(using_copy_on_write)
 4,0.000,0.000,0.000,0.000,__init__.py:43(using_pyarrow_string_dtype)
 3,0.000,0.000,0.000,0.000,config.py:127(_get_single_key)
@@ -517,10 +517,10 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 2,0.000,0.000,0.000,0.000,inference.py:105(is_file_like)
 1,0.000,0.000,0.000,0.000,base.py:510(find)
 349,0.000,0.000,0.000,0.000,generic.py:37(_check)
-3,0.000,0.000,0.000,0.000,inference.py:273(is_dict_like)
-11,0.000,0.000,0.000,0.000,inference.py:334(is_hashable)
 349,0.000,0.000,0.000,0.000,generic.py:42(_instancecheck)
 9,0.000,0.000,0.000,0.000,inference.py:300(<genexpr>)
+3,0.000,0.000,0.000,0.000,inference.py:273(is_dict_like)
+11,0.000,0.000,0.000,0.000,inference.py:334(is_hashable)
 1,0.000,0.000,0.000,0.000,missing.py:261(_isna_array)
 1,0.000,0.000,0.000,0.000,missing.py:305(_isna_string_dtype)
 1,0.000,0.000,0.000,0.000,missing.py:464(array_equivalent)
@@ -549,7 +549,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 4,0.000,0.000,0.000,0.000,cast.py:1544(construct_1d_object_array_from_listlike)
 14,0.000,0.000,0.000,0.000,construction.py:419(extract_array)
 81,0.000,0.000,0.000,0.000,construction.py:484(ensure_wrapped_if_datetimelike)
-14,0.000,0.000,0.001,0.000,construction.py:518(sanitize_array)
+14,0.000,0.000,0.000,0.000,construction.py:518(sanitize_array)
 4,0.000,0.000,0.000,0.000,construction.py:665(_sanitize_non_ordered)
 14,0.000,0.000,0.000,0.000,construction.py:673(_sanitize_ndim)
 14,0.000,0.000,0.000,0.000,construction.py:712(_sanitize_str_dtypes)
@@ -585,9 +585,9 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 76,0.000,0.000,0.000,0.000,flags.py:89(allows_duplicate_labels)
 74,0.000,0.000,0.001,0.000,frame.py:653(_sliced_from_mgr)
 74,0.000,0.000,0.001,0.000,frame.py:656(_constructor_sliced_from_mgr)
-1,0.000,0.000,0.003,0.003,frame.py:668(__init__)
+1,0.000,0.000,0.002,0.002,frame.py:668(__init__)
 74,0.001,0.000,0.009,0.000,frame.py:3779(_ixs)
-79,0.000,0.000,0.000,0.000,generic.py:274(__init__)
+79,0.000,0.000,0.001,0.000,generic.py:274(__init__)
 75,0.000,0.000,0.001,0.000,generic.py:335(_from_mgr)
 76,0.000,0.000,0.000,0.000,generic.py:358(attrs)
 152,0.000,0.000,0.000,0.000,generic.py:393(flags)
@@ -673,7 +673,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 76,0.000,0.000,0.000,0.000,managers.py:1902(_block)
 74,0.000,0.000,0.001,0.000,managers.py:1956(external_values)
 5,0.000,0.000,0.000,0.000,managers.py:1960(internal_values)
-1,0.000,0.000,0.001,0.001,managers.py:2068(create_block_manager_from_column_arrays)
+1,0.000,0.000,0.000,0.000,managers.py:2068(create_block_manager_from_column_arrays)
 9,0.000,0.000,0.000,0.000,managers.py:2124(_grouping_func)
 1,0.000,0.000,0.000,0.000,managers.py:2137(_form_blocks)
 5,0.000,0.000,0.000,0.000,managers.py:2194(_stack_arrays)
@@ -685,7 +685,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.001,0.001,construction.py:96(arrays_to_mgr)
 1,0.000,0.000,0.000,0.000,construction.py:196(mgr_to_mgr)
 1,0.000,0.000,0.000,0.000,construction.py:487(<listcomp>)
-1,0.000,0.000,0.003,0.003,construction.py:423(dict_to_mgr)
+1,0.000,0.000,0.002,0.002,construction.py:423(dict_to_mgr)
 1,0.000,0.000,0.000,0.000,construction.py:596(_homogenize)
 1,0.000,0.000,0.000,0.000,common.py:121(close)
 1,0.000,0.000,0.000,0.000,common.py:145(is_url)
@@ -693,18 +693,18 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,common.py:192(validate_header_arg)
 2,0.000,0.000,0.000,0.000,common.py:233(stringify_path)
 1,0.000,0.000,0.000,0.000,common.py:277(is_fsspec_url)
-1,0.000,0.000,0.001,0.001,common.py:289(_get_filepath_or_buffer)
+1,0.000,0.000,0.000,0.000,common.py:289(_get_filepath_or_buffer)
 1,0.000,0.000,0.000,0.000,common.py:503(get_compression_method)
 1,0.000,0.000,0.000,0.000,common.py:538(infer_compression)
-1,0.000,0.000,0.002,0.002,common.py:652(get_handle)
+1,0.000,0.000,0.001,0.001,common.py:652(get_handle)
 1,0.000,0.000,0.000,0.000,common.py:1107(_maybe_memory_map)
-2,0.000,0.000,0.001,0.000,common.py:1155(_is_binary_mode)
+2,0.000,0.000,0.000,0.000,common.py:1155(_is_binary_mode)
 1,0.000,0.000,0.000,0.000,common.py:1176(_get_binary_io_classes)
 4,0.000,0.000,0.000,0.000,common.py:1219(<genexpr>)
 2,0.000,0.000,0.000,0.000,common.py:1194(is_potential_multi_index)
 1,0.000,0.000,0.000,0.000,common.py:1223(dedup_names)
 1,0.000,0.000,0.000,0.000,<string>:2(__init__)
-3/2,0.000,0.000,0.002,0.001,series.py:371(__init__)
+3/2,0.000,0.000,0.001,0.001,series.py:371(__init__)
 1,0.000,0.000,0.001,0.001,series.py:524(_init_dict)
 1,0.000,0.000,0.000,0.000,series.py:577(_constructor)
 1,0.000,0.000,0.000,0.000,series.py:581(_constructor_from_mgr)
@@ -720,15 +720,15 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,series.py:6136(any)
 2,0.000,0.000,0.000,0.000,readers.py:518(validate_integer)
 1,0.000,0.000,0.000,0.000,readers.py:550(_validate_names)
-1,0.000,0.000,0.006,0.006,readers.py:574(_read)
-1,0.000,0.000,0.006,0.006,readers.py:848(read_csv)
-1,0.000,0.000,0.003,0.003,readers.py:1403(__init__)
+1,0.000,0.000,0.004,0.004,readers.py:574(_read)
+1,0.000,0.000,0.004,0.004,readers.py:848(read_csv)
+1,0.000,0.000,0.001,0.001,readers.py:1403(__init__)
 1,0.000,0.000,0.000,0.000,readers.py:1450(close)
 1,0.000,0.000,0.000,0.000,readers.py:1455(_get_options_with_defaults)
 1,0.000,0.000,0.000,0.000,readers.py:1502(_check_file_or_buffer)
 1,0.000,0.000,0.000,0.000,readers.py:1513(_clean_options)
-1,0.000,0.000,0.003,0.003,readers.py:1673(_make_engine)
-1,0.000,0.000,0.004,0.004,readers.py:1732(read)
+1,0.000,0.000,0.001,0.001,readers.py:1673(_make_engine)
+1,0.000,0.000,0.003,0.003,readers.py:1732(read)
 1,0.000,0.000,0.000,0.000,readers.py:1779(__enter__)
 1,0.000,0.000,0.000,0.000,readers.py:1782(__exit__)
 1,0.000,0.000,0.000,0.000,readers.py:1850(_clean_na_values)
@@ -751,14 +751,14 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,base_parser.py:1247(_process_date_conversion)
 1,0.000,0.000,0.000,0.000,base_parser.py:1404(_validate_parse_dates_arg)
 3,0.000,0.000,0.000,0.000,base_parser.py:1425(is_index_col)
-1,0.001,0.001,0.001,0.001,c_parser_wrapper.py:60(__init__)
+1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:60(__init__)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:194(close)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:212(<dictcomp>)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:213(<listcomp>)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:201(_set_noconvert_columns)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:326(<listcomp>)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:330(<dictcomp>)
-1,0.000,0.000,0.001,0.001,c_parser_wrapper.py:222(read)
+1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:222(read)
 9,0.000,0.000,0.000,0.000,c_parser_wrapper.py:367(<listcomp>)
 9,0.000,0.000,0.000,0.000,c_parser_wrapper.py:369(<setcomp>)
 9,0.000,0.000,0.000,0.000,c_parser_wrapper.py:370(<setcomp>)
@@ -766,53 +766,53 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,c_parser_wrapper.py:392(ensure_dtype_objs)
 1,0.000,0.000,0.000,0.000,{method 'close' of 'pandas._libs.parsers.TextReader' objects}
 1,0.000,0.000,0.000,0.000,{method 'read_low_memory' of 'pandas._libs.parsers.TextReader' objects}
-142,0.000,0.000,0.000,0.000,_optimize.py:135(_wrap_callback)
-7096,0.002,0.000,0.002,0.000,_optimize.py:156(_call_callback_maybe_halt)
-284,0.000,0.000,0.000,0.000,_optimize.py:221(__getattr__)
-142,0.005,0.000,58.808,0.414,_minimize.py:51(minimize)
-142,0.000,0.000,0.000,0.000,_optimize.py:267(_check_unknown_options)
-142,0.000,0.000,0.000,0.000,_optimize.py:375(hess)
-142,0.001,0.000,0.913,0.006,_optimize.py:295(_prepare_scalar_function)
-142,0.001,0.000,0.001,0.000,_minimize.py:1019(standardize_constraints)
-142,0.001,0.000,0.005,0.000,_minimize.py:991(_validate_bounds)
+130,0.000,0.000,0.000,0.000,_optimize.py:135(_wrap_callback)
+5939,0.002,0.000,0.002,0.000,_optimize.py:156(_call_callback_maybe_halt)
+260,0.000,0.000,0.000,0.000,_optimize.py:221(__getattr__)
+130,0.004,0.000,44.240,0.340,_minimize.py:51(minimize)
+130,0.000,0.000,0.000,0.000,_optimize.py:267(_check_unknown_options)
+130,0.000,0.000,0.000,0.000,_optimize.py:375(hess)
+130,0.001,0.000,0.866,0.007,_optimize.py:295(_prepare_scalar_function)
+130,0.000,0.000,0.001,0.000,_minimize.py:1019(standardize_constraints)
+130,0.001,0.000,0.004,0.000,_minimize.py:991(_validate_bounds)
 1,0.000,0.000,0.000,0.000,_numdiff.py:90(_eps_for_method)
-568,0.000,0.000,0.000,0.000,_base.py:1461(issparse)
-284,0.001,0.000,0.001,0.000,_sputils.py:216(isintlike)
-142,0.000,0.000,0.002,0.000,_sputils.py:238(isshape)
-142,0.000,0.000,0.001,0.000,_interface.py:144(__new__)
-142,0.000,0.000,0.002,0.000,_interface.py:159(__init__)
+520,0.000,0.000,0.000,0.000,_base.py:1461(issparse)
+260,0.001,0.000,0.001,0.000,_sputils.py:216(isintlike)
+130,0.000,0.000,0.002,0.000,_sputils.py:238(isshape)
+130,0.000,0.000,0.000,0.000,_interface.py:144(__new__)
+130,0.000,0.000,0.002,0.000,_interface.py:159(__init__)
 78,0.001,0.000,0.001,0.000,{method 'acquire' of '_multiprocessing.SemLock' objects}
 78,0.000,0.000,0.000,0.000,{method 'release' of '_multiprocessing.SemLock' objects}
-9419,0.305,0.000,0.434,0.000,_numdiff.py:11(_adjust_scheme_to_bounds)
-28257,0.011,0.000,0.018,0.000,_numdiff.py:204(<genexpr>)
-9419,0.022,0.000,0.040,0.000,_numdiff.py:193(_prepare_bounds)
-56514,0.193,0.000,48.565,0.001,_numdiff.py:455(fun_wrapped)
-9419,0.353,0.000,50.153,0.005,_numdiff.py:275(approx_derivative)
-9419,0.525,0.000,49.186,0.005,_numdiff.py:566(_dense_difference)
-65933,0.266,0.000,56.199,0.001,_differentiable_functions.py:132(fun_wrapped)
-9419,0.008,0.000,8.080,0.001,_differentiable_functions.py:154(update_fun)
-9419,0.049,0.000,50.204,0.005,_differentiable_functions.py:170(update_grad)
-9277,0.020,0.000,0.049,0.000,_differentiable_functions.py:240(update_x)
-142,0.003,0.000,0.913,0.006,_differentiable_functions.py:86(__init__)
-19048,0.011,0.000,8.091,0.000,_differentiable_functions.py:249(_update_fun)
-9629,0.011,0.000,50.215,0.005,_differentiable_functions.py:254(_update_grad)
-9487,0.040,0.000,57.572,0.006,_differentiable_functions.py:282(fun_and_grad)
-284,0.001,0.000,0.019,0.000,_minimize.py:1007(standardize_bounds)
-142,0.237,0.002,58.773,0.414,_lbfgsb_py.py:212(_minimize_lbfgsb)
-142,0.002,0.000,0.005,0.000,_lbfgsb_py.py:434(__init__)
-142,0.000,0.000,0.000,0.000,_lbfgsb_py.py:288(<listcomp>)
-3408,0.001,0.000,0.001,0.000,_constraints.py:12(_arr_to_scalar)
-142,0.001,0.000,0.009,0.000,_constraints.py:246(_input_validation)
-142,0.001,0.000,0.012,0.000,_constraints.py:254(__init__)
-142,0.001,0.000,0.001,0.000,_constraints.py:411(<listcomp>)
-142,0.000,0.000,0.000,0.000,_constraints.py:412(<listcomp>)
-142,0.001,0.000,0.004,0.000,_constraints.py:399(new_bounds_to_old)
-284,0.001,0.000,0.002,0.000,_constraints.py:430(<listcomp>)
-284,0.001,0.000,0.001,0.000,_constraints.py:432(<listcomp>)
-284,0.001,0.000,0.005,0.000,_constraints.py:417(old_bound_to_new)
-65933,1.375,0.000,2.893,0.000,_kdtree.py:353(__init__)
-717199,1.760,0.000,32.506,0.000,_kdtree.py:363(query)
-717199,14.450,0.000,30.506,0.000,{function KDTree.query at 0x12ee73040}
+6813,0.226,0.000,0.327,0.000,_numdiff.py:11(_adjust_scheme_to_bounds)
+20439,0.008,0.000,0.013,0.000,_numdiff.py:204(<genexpr>)
+6813,0.016,0.000,0.029,0.000,_numdiff.py:193(_prepare_bounds)
+40878,0.135,0.000,36.507,0.001,_numdiff.py:455(fun_wrapped)
+6813,0.255,0.000,37.663,0.006,_numdiff.py:275(approx_derivative)
+6813,0.370,0.000,36.950,0.005,_numdiff.py:566(_dense_difference)
+47691,0.195,0.000,42.307,0.001,_differentiable_functions.py:132(fun_wrapped)
+6813,0.006,0.000,6.118,0.001,_differentiable_functions.py:154(update_fun)
+6813,0.036,0.000,37.701,0.006,_differentiable_functions.py:170(update_grad)
+6683,0.015,0.000,0.036,0.000,_differentiable_functions.py:240(update_x)
+130,0.002,0.000,0.865,0.007,_differentiable_functions.py:86(__init__)
+13764,0.008,0.000,6.127,0.000,_differentiable_functions.py:249(_update_fun)
+6951,0.009,0.000,37.710,0.005,_differentiable_functions.py:254(_update_grad)
+6821,0.038,0.000,43.113,0.006,_differentiable_functions.py:282(fun_and_grad)
+260,0.001,0.000,0.017,0.000,_minimize.py:1007(standardize_bounds)
+130,0.189,0.001,44.210,0.340,_lbfgsb_py.py:212(_minimize_lbfgsb)
+130,0.002,0.000,0.005,0.000,_lbfgsb_py.py:434(__init__)
+130,0.000,0.000,0.000,0.000,_lbfgsb_py.py:288(<listcomp>)
+3120,0.001,0.000,0.001,0.000,_constraints.py:12(_arr_to_scalar)
+130,0.001,0.000,0.008,0.000,_constraints.py:246(_input_validation)
+130,0.001,0.000,0.010,0.000,_constraints.py:254(__init__)
+130,0.001,0.000,0.001,0.000,_constraints.py:411(<listcomp>)
+130,0.000,0.000,0.000,0.000,_constraints.py:412(<listcomp>)
+130,0.001,0.000,0.004,0.000,_constraints.py:399(new_bounds_to_old)
+260,0.001,0.000,0.001,0.000,_constraints.py:430(<listcomp>)
+260,0.000,0.000,0.001,0.000,_constraints.py:432(<listcomp>)
+260,0.001,0.000,0.004,0.000,_constraints.py:417(old_bound_to_new)
+47691,0.988,0.000,2.096,0.000,_kdtree.py:353(__init__)
+535206,1.334,0.000,24.616,0.000,_kdtree.py:363(query)
+535206,10.893,0.000,23.095,0.000,{function KDTree.query at 0x124699040}
 2,0.000,0.000,0.000,0.000,_mio.py:15(_open_file_context)
 2,0.000,0.000,0.000,0.000,_mio.py:25(_open_file)
 1,0.000,0.000,0.000,0.000,_mio.py:52(mat_reader_factory)
@@ -827,7 +827,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,_mio5.py:226(initialize_read)
 1,0.000,0.000,0.000,0.000,_mio5.py:238(read_var_header)
 1,0.000,0.000,0.000,0.000,_mio5.py:273(read_var_array)
-1,0.000,0.000,0.001,0.001,_mio5.py:292(get_variables)
+1,0.000,0.000,0.000,0.000,_mio5.py:292(get_variables)
 1,0.000,0.000,0.000,0.000,{built-in method fcntl.ioctl}
 1,0.000,0.000,0.000,0.000,{method 'set_stream' of 'scipy.io.matlab._mio5_utils.VarReader5' objects}
 2,0.000,0.000,0.000,0.000,{method 'read_full_tag' of 'scipy.io.matlab._mio5_utils.VarReader5' objects}
@@ -835,12 +835,12 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,{method 'array_from_header' of 'scipy.io.matlab._mio5_utils.VarReader5' objects}
 1,0.000,0.000,0.001,0.001,_monitor.py:30(__init__)
 1,0.000,0.000,0.000,0.000,std.py:98(<listcomp>)
-1,0.000,0.000,0.023,0.023,std.py:90(__init__)
+1,0.000,0.000,0.020,0.020,std.py:90(__init__)
 78,0.000,0.000,0.001,0.000,std.py:102(acquire)
 78,0.000,0.000,0.000,0.000,std.py:106(release)
 4,0.000,0.000,0.000,0.000,std.py:110(__enter__)
 4,0.000,0.000,0.000,0.000,std.py:113(__exit__)
-1,0.000,0.000,0.023,0.023,std.py:116(create_mp_lock)
+1,0.000,0.000,0.020,0.020,std.py:116(create_mp_lock)
 75,0.000,0.000,0.000,0.000,std.py:153(__init__)
 75,0.000,0.000,0.000,0.000,std.py:163(colour)
 75,0.000,0.000,0.000,0.000,std.py:167(colour)
@@ -852,11 +852,11 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 75,0.000,0.000,0.003,0.000,std.py:460(print_status)
 1,0.000,0.000,0.000,0.000,std.py:441(status_printer)
 75,0.002,0.000,0.005,0.000,std.py:467(format_meter)
-1,0.000,0.000,0.024,0.024,std.py:666(__new__)
+1,0.000,0.000,0.022,0.022,std.py:666(__new__)
 1,0.000,0.000,0.000,0.000,std.py:685(<setcomp>)
 1,0.000,0.000,0.000,0.000,std.py:682(_get_free_pos)
 1,0.000,0.000,0.000,0.000,std.py:689(_decr_instances)
-1,0.000,0.000,0.023,0.023,std.py:763(get_lock)
+1,0.000,0.000,0.020,0.020,std.py:763(get_lock)
 1,0.000,0.000,0.006,0.006,std.py:953(__init__)
 1,0.000,0.000,0.000,0.000,std.py:1148(__del__)
 75,0.000,0.000,0.006,0.000,std.py:1151(__str__)
@@ -885,13 +885,13 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 150,0.000,0.000,0.001,0.000,utils.py:272(_is_ascii)
 1,0.000,0.000,0.000,0.000,utils.py:281(_screen_shape_wrapper)
 1,0.000,0.000,0.000,0.000,utils.py:346(<listcomp>)
-1,0.000,0.000,0.005,0.005,utils.py:332(_screen_shape_linux)
+1,0.000,0.000,0.006,0.006,utils.py:332(_screen_shape_linux)
 3582,0.001,0.000,0.001,0.000,utils.py:374(<genexpr>)
 75,0.000,0.000,0.002,0.000,utils.py:373(_text_width)
 75,0.000,0.000,0.002,0.000,utils.py:377(disp_len)
 1,0.000,0.000,0.000,0.000,__init__.py:22(<listcomp>)
 38,0.000,0.000,0.000,0.000,__init__.py:23(<genexpr>)
-1,0.000,0.000,0.009,0.009,__init__.py:15(<module>)
+1,0.000,0.000,0.007,0.007,__init__.py:15(<module>)
 1,0.000,0.000,0.000,0.000,context.py:14(ProcessError)
 1,0.000,0.000,0.000,0.000,context.py:17(BufferTooShort)
 1,0.000,0.000,0.000,0.000,context.py:20(TimeoutError)
@@ -910,7 +910,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,context.py:293(ForkContext)
 1,0.000,0.000,0.000,0.000,context.py:297(SpawnContext)
 1,0.000,0.000,0.000,0.000,context.py:301(ForkServerContext)
-1,0.000,0.000,0.008,0.008,context.py:1(<module>)
+1,0.000,0.000,0.007,0.007,context.py:1(<module>)
 1,0.000,0.000,0.000,0.000,process.py:37(current_process)
 1,0.000,0.000,0.000,0.000,process.py:71(BaseProcess)
 1,0.000,0.000,0.000,0.000,process.py:343(AuthenticationString)
@@ -922,7 +922,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,reduction.py:33(ForkingPickler)
 1,0.000,0.000,0.000,0.000,reduction.py:211(_C)
 1,0.000,0.000,0.000,0.000,reduction.py:251(AbstractReducer)
-1,0.000,0.000,0.007,0.007,reduction.py:10(<module>)
+1,0.000,0.000,0.005,0.005,reduction.py:10(<module>)
 236,0.000,0.000,0.000,0.000,socket.py:78(<lambda>)
 237,0.000,0.000,0.000,0.000,socket.py:83(<lambda>)
 238,0.000,0.000,0.000,0.000,socket.py:88(<lambda>)
@@ -931,14 +931,14 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.000,0.000,socket.py:214(socket)
 1,0.000,0.000,0.000,0.000,socket.py:661(SocketIO)
 1,0.000,0.000,0.005,0.005,socket.py:4(<module>)
-1,0.000,0.000,0.008,0.008,synchronize.py:50(__init__)
+1,0.000,0.000,0.009,0.009,synchronize.py:50(__init__)
 1,0.000,0.000,0.000,0.000,synchronize.py:90(_make_methods)
 1,0.000,0.000,0.000,0.000,synchronize.py:114(_make_name)
 1,0.000,0.000,0.000,0.000,synchronize.py:46(SemLock)
 1,0.000,0.000,0.000,0.000,synchronize.py:123(Semaphore)
 1,0.000,0.000,0.000,0.000,synchronize.py:142(BoundedSemaphore)
 1,0.000,0.000,0.000,0.000,synchronize.py:159(Lock)
-1,0.000,0.000,0.008,0.008,synchronize.py:186(__init__)
+1,0.000,0.000,0.009,0.009,synchronize.py:186(__init__)
 1,0.000,0.000,0.000,0.000,synchronize.py:184(RLock)
 1,0.000,0.000,0.000,0.000,synchronize.py:210(Condition)
 1,0.000,0.000,0.000,0.000,synchronize.py:321(Event)
@@ -958,7 +958,7 @@ ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
 1,0.000,0.000,0.002,0.002,resource_tracker.py:145(register)
 1,0.000,0.000,0.002,0.002,resource_tracker.py:153(_send)
 1,0.000,0.000,0.000,0.000,resource_tracker.py:46(ResourceTracker)
-1,0.000,0.000,0.005,0.005,resource_tracker.py:18(<module>)
+1,0.000,0.000,0.006,0.006,resource_tracker.py:18(<module>)
 1,0.000,0.000,0.000,0.000,spawn.py:45(get_executable)
 1,0.000,0.000,0.003,0.003,spawn.py:11(<module>)
 1,0.000,0.000,0.000,0.000,runpy.py:25(_TempModule)

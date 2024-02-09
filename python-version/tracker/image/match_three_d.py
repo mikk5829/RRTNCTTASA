@@ -80,15 +80,28 @@ def plot_2d(points, extra_points=None, title="", legend=None, labels=None):
 
 
 # points in meters around the center of mass
+# TR = [-0.080903, -2.30455, 1.19694] m
+# BR = [-0.080903, -2.30455, -0.783056] m
+# TL = [-0.157453, -0.843874, 1.19694] m
+# BL = [-0.157453, -0.843874, -0.783056] m
+# BLsat = [-0.244135, 1.03251, -0.65297] m
 three_d_points = np.array([
-    [-0.08 - 0.1069, -2.30333333, 1.19666667],  # Top right solar panel
-    [-0.15666667 - 0.1069, -0.84333333, 1.19666667],  # Top left solar panel
-    [-0.08 - 0.1069, -2.30333333, -0.78333333],  # Bottom right solar panel
-    [-0.15666667 - 0.1069, -0.84333333, -0.78333333],  # Bottom left solar panel
-    [-0.24333333 - 0.1069, 1.03, -0.65333333],  # Bottom left satellite
-    # [-0.24666667, 1.01333333, 0.69333333],  # Top left satellite
-    # [0.7566, 1.03, -0.65333333],
+    [-0.080903, -2.30455, 1.19694],  # Top right solar panel
+    [-0.157453, -0.843874, 1.19694],  # Top left solar panel
+    [-0.080903, -2.30455, -0.783056],  # Bottom right solar panel
+    [-0.157453, -0.843874, -0.783056],  # Bottom left solar panel
+    [-0.244135, 1.03251, -0.65297],  # Bottom left satellite
 ])
+
+# three_d_points = np.array([
+#     [-0.08 - 0.1069, -2.30333333, 1.19666667],  # Top right solar panel
+#     [-0.15666667 - 0.1069, -0.84333333, 1.19666667],  # Top left solar panel
+#     [-0.08 - 0.1069, -2.30333333, -0.78333333],  # Bottom right solar panel
+#     [-0.15666667 - 0.1069, -0.84333333, -0.78333333],  # Bottom left solar panel
+#     [-0.24333333 - 0.1069, 1.03, -0.65333333],  # Bottom left satellite
+#     # [-0.24666667, 1.01333333, 0.69333333],  # Top left satellite
+#     # [0.7566, 1.03, -0.65333333],
+# ])
 
 # three_d_points -= [0.2799 - 0.1329 - 0.1785]
 
@@ -225,22 +238,22 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
 if __name__ == "__main__":
     pr = cProfile.Profile()
     pr.enable()
-    folder = "test_images/dynamic_unknowndeg_0to360_5degstep/"
+    folder = "test_images/replica_of_dynamic_unknowndeg_0to360_5degstep/"
     start_time = timeit.default_timer()
     df_init = pd.read_csv(folder + "best_scores.csv")
     # remove last row
-    df_init = df_init[:-1]
-    df_init = pd.concat([df_init, df_init], ignore_index=True)
-    suffix = "_eps3_final_strict"
-    mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
+    # df_init = df_init[:-1]
+    # df_init = pd.concat([df_init, df_init], ignore_index=True)
+    suffix = "_synthetic_noLineFit_unc"
+    mat = scipy.io.loadmat(folder + "all_vertices" + suffix + ".mat")
     # remove last row
     # mat['all_vertices'] = mat['all_vertices'][:-1]
     # mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
-    initial_guess = [168.68, -72.54, -82.47, 0, 0, 0]
+    # initial_guess = [168.68, -72.54, -82.47, 0, 0, 0]
     # set last 3 to 0 to remove translation
-    # initial_guess[-1:] -= 22
+    initial_guess[-1:] -= 22
 
     fine_data = []
     guess_data = []
