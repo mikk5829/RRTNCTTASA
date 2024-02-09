@@ -50,11 +50,18 @@ def plot_3d(points):
 
 def plot_2d(points, extra_points=None, title="", legend=None, labels=None):
     # plot im moved such that com is in 0,0 extent=[horizontal_min,horizontal_max,vertical_min,vertical_max].
+    # remove 104 from left and 68 from right of im
+
     plt.imshow(im, extent=[-size[1] // 2, size[1] // 2, size[0] // 2, -size[0] // 2])
+
     # plt.imshow(im)
-    plt.title(title)
+    # plt.title(title)
     # scatter plot points
+    # remove white space
+    plt.gca().set_axis_off()
     plt.scatter(points[:, 0], points[:, 1], c='r')
+    # remove the axis
+    plt.axis('off')
     # for point in points:
     #     plt.plot(point[0], point[1], 'ro')
     if extra_points is not None:
@@ -65,9 +72,10 @@ def plot_2d(points, extra_points=None, title="", legend=None, labels=None):
     if labels is not None:
         for i, txt in enumerate(labels):
             plt.text(points[i][0], points[i][1], f"{txt:.2f}", c='r')
-    if legend:
-        plt.legend(legend)
-    # plt.savefig(f"test_images/dynamic_unknowndeg_0to360_5degstep/minimize/{title}.png")
+    # if legend:
+    # plt.legend(legend)
+    plt.savefig(f"test_images/dynamic_unknowndeg_0to360_5degstep/minimize/{title}.png", bbox_inches='tight',
+                pad_inches=0)
     plt.show()
 
 
@@ -92,8 +100,7 @@ iteration = 0
 
 def match_three_d(two_d_points, weights, initial_guess, bounds):
     res = minimize(loss_minimize, initial_guess, args=(two_d_points, weights), bounds=bounds,
-                   method='L-BFGS-B',
-                   options={})
+                   method='L-BFGS-B')
 
     return res.fun, res.x
 
@@ -105,7 +112,7 @@ def loss_minimize(x, two_d_points, weights):
 
 def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, two_d_points, weights):
     global iteration, three_d_points
-    iteration += 1
+    # iteration += 1
     mm = 1e-3
     um = 1e-6
     f = 20 * mm
@@ -158,7 +165,12 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     # find the closest 3d point for each 2d point
     closest_points = []
     for point in two_d_points:
+        # find the closest point
         closest = tree.query(point)[1]
+        if closest in closest_points:
+            closest = tree.query(point, k=2)[1][1]
+        if closest in closest_points:
+            closest = tree.query(point, k=3)[1][2]
         closest_points.append(closest)
 
     distances = np.linalg.norm(point2d_rotated[closest_points] - two_d_points, axis=1)
@@ -166,6 +178,7 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     # if closest_points has duplicates, remove them based on distances
     u, c = np.unique(closest_points, return_counts=True)
     dup = u[c > 1]
+    to_delete = np.array([], dtype=int)
     for d in dup:
         # get all indices of d
         indices = np.where(closest_points == d)[0]
@@ -181,10 +194,10 @@ def loss(roll: float, pitch: float, yaw: float, x: float, y: float, z: float, tw
     #                 "Projected 3d points"])
 
     distances = np.linalg.norm(point2d_rotated - two_d_points, axis=1)
-    # exp_lambda = 1 / np.mean(distances)
-    # upper_bound = np.log(5) / exp_lambda
+    exp_lambda = 1 / np.mean(distances)
+    upper_bound = np.log(5) / exp_lambda
     # remove points that are outliers based on distance
-    upper_bound = np.mean(distances) + 1.7 * np.std(distances)
+    # upper_bound = np.mean(distances) + 2 * np.std(distances)
 
     two_d_points = two_d_points[distances < upper_bound]
     point2d_rotated = point2d_rotated[distances < upper_bound]
@@ -218,17 +231,16 @@ if __name__ == "__main__":
     # remove last row
     df_init = df_init[:-1]
     df_init = pd.concat([df_init, df_init], ignore_index=True)
-    suffix = "_eps2_final_strict"
+    suffix = "_eps3_final_strict"
     mat = scipy.io.loadmat(folder + "all_vertices_mat" + suffix + ".mat")
     # remove last row
-    mat['all_vertices'] = mat['all_vertices'][:-1]
-
-    mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
+    # mat['all_vertices'] = mat['all_vertices'][:-1]
+    # mat['all_vertices'] = np.concatenate((mat['all_vertices'], mat['all_vertices']), axis=0)
 
     initial_guess = df_init.iloc[df_init.index[0]].values[1:][2:]
-    initial_guess = [168.680000, -64.540000, -79.470000 - 0.1069, 0.4, 0.25, 0]
+    initial_guess = [168.68, -72.54, -82.47, 0, 0, 0]
     # set last 3 to 0 to remove translation
-    # initial_guess[-3:] = 0
+    # initial_guess[-1:] -= 22
 
     fine_data = []
     guess_data = []
@@ -250,19 +262,14 @@ if __name__ == "__main__":
     trial_multiplier = 8  # high value means more uncertainty
 
     for img_number in tqdm(df_init.index):
-        if (img_number == 0 or img_number % 9 == 0) and folder == "test_images/perfect_5degstep/":
-            continue  # skip the bad images
-
-        # skip_img = [35, 36, 53, 68, 69]
-        # if (img_number in skip_img) and folder == "test_images/dynamic_unknowndeg_0to360_5degstep/":
-        #     continue  # skip the bad images
         data = []
         points = []
         tries = 3  # number of tries to get a good result
 
         file_name = df_init.iloc[img_number].values[1:][0]
+        # file_name = df_init.iloc[img_number].values[0:][0]
 
-        im = cv.imread(folder + file_name)
+        im = cv.imread(folder + str(file_name))
         size = im.shape
         width = size[1]
         height = size[0]
@@ -272,11 +279,13 @@ if __name__ == "__main__":
         image_points = mat['all_vertices'][img_number][0]
 
         # remove rows where the weight column is below 0.11
-        image_points = image_points[image_points[:, 2] > 0.11]
+        # image_points = image_points[image_points[:, 2] > 0.11]
 
         weights = image_points[:, 2]
 
         image_points = image_points[:, :2]
+        # minus one in the y axis
+        # image_points[:, 1] -= 0.54
 
         image_points[:, 0] += 104
 
@@ -316,7 +325,8 @@ if __name__ == "__main__":
                 break  # no more tries
             else:  # bad result
                 tries -= 1
-                trial_multiplier += 1  # increase trial multiplier to increase uncertainty
+                if trial_multiplier < 5:
+                    trial_multiplier += 1  # increase trial multiplier to increase uncertainty
 
         guess_data.append(
             [img_number, roll, pitch, yaw, x, y, z, bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1],
@@ -350,12 +360,12 @@ if __name__ == "__main__":
 
         if False:
             for i, row in enumerate(points):
-                if i == len(points) - 1:
+                if i == 0 or i == len(points) - 1:
                     time.sleep(0.5)
                     # print("Trial multiplier: " + str(trial_multiplier))
-                    plot_2d(row[0], row[1], title=f"iteration {data[i][0]} loss {data[i][1]:.2f}, image {img_number}",
-                            legend=["Found 2d points",
-                                    "Projected 3d points"])
+                    plot_2d(row[0], row[1], title=f"iteration {i} loss {data[i][1]:.2f}, image {img_number}",
+                            legend=["Found 2D points",
+                                    "Projected 3D points"])
                     time.sleep(0.5)
 
     end_time = timeit.default_timer()
